@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Values Alignment Quiz: A Philosophical Exploration</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .option-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out, border-color 0.2s ease-in-out;
+        }
+        .option-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .option-card.selected {
+            border-color: #4f46e5;
+            background-color: #eef2ff;
+        }
+        .progress-bar-fill {
+            transition: width 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 flex items-center justify-center min-h-screen p-4">
+
+    <div id="quiz-container" class="w-full max-w-3xl mx-auto">
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="text-center bg-white p-8 sm:p-12 rounded-2xl shadow-lg">
+            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Values Alignment Quiz</h1>
+            <p class="text-lg sm:text-xl text-gray-600 mb-2">A Philosophical Exploration</p>
+            <p class="text-gray-500 max-w-xl mx-auto mb-8">This 10-minute, 30-question quiz presents scenarios and ideas to explore your personal worldview. It is not a test of religious knowledge but a reflection on the deep structures of different ethical traditions.</p>
+            <button id="start-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors text-lg shadow-md hover:shadow-lg">Start Quiz</button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-screen" class="hidden bg-white p-6 sm:p-10 rounded-2xl shadow-lg">
+            <!-- Progress Bar -->
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-sm font-medium text-gray-600">Question <span id="question-number"></span> of 30</span>
+                     <span id="progress-percent" class="text-sm font-medium text-indigo-600">0%</span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-indigo-600 h-2.5 rounded-full progress-bar-fill" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <!-- Question -->
+            <h2 id="question-text" class="text-xl sm:text-2xl font-semibold mb-6 text-gray-900" style="min-height: 80px;"></h2>
+            
+            <!-- Options -->
+            <div id="options-container" class="space-y-4">
+                <!-- Options will be dynamically inserted here -->
+            </div>
+
+            <!-- Navigation -->
+            <div class="mt-8 flex justify-between items-center">
+                <button id="back-btn" class="bg-gray-200 text-gray-700 font-bold py-2 px-6 rounded-lg hover:bg-gray-300 transition-colors">Back</button>
+                <button id="next-btn" class="bg-gray-300 text-gray-500 font-bold py-2 px-6 rounded-lg transition-colors cursor-not-allowed" disabled>Next</button>
+            </div>
+        </div>
+
+        <!-- Result Screen -->
+        <div id="result-screen" class="hidden text-center bg-white p-8 sm:p-12 rounded-2xl shadow-lg">
+            <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">Quiz Complete!</h2>
+            <p class="text-gray-600 text-lg mb-6">Based on your answers, your values show a stronger alignment with the philosophical framework of:</p>
+            
+            <div id="final-result-text" class="text-4xl font-extrabold text-indigo-600 mb-8"></div>
+
+            <div class="w-full max-w-md mx-auto space-y-4 mb-8">
+                <div class="flex justify-between font-medium">
+                    <span>Judaism</span>
+                    <span id="judaism-score-percent"></span>
+                </div>
+                <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="judaism-bar" class="bg-blue-500 h-4 rounded-full" style="width: 0%;"></div>
+                </div>
+
+                <div class="flex justify-between font-medium">
+                    <span>Christianity</span>
+                    <span id="christianity-score-percent"></span>
+                </div>
+                 <div class="w-full bg-gray-200 rounded-full h-4">
+                    <div id="christianity-bar" class="bg-red-500 h-4 rounded-full" style="width: 0%;"></div>
+                </div>
+            </div>
+
+            <p class="text-gray-500 max-w-xl mx-auto mb-8">This quiz is a tool for reflection, not a definitive label. Both traditions are rich and complex. Your results reflect an alignment with the core philosophical frameworks presented.</p>
+
+            <button id="retake-btn" class="bg-indigo-600 text-white font-bold py-3 px-8 rounded-lg hover:bg-indigo-700 transition-colors text-lg shadow-md hover:shadow-lg">Retake Quiz</button>
+        </div>
+
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Which statement about the origin of our moral inclinations feels more true?",
+                weight: 5,
+                choices: [
+                    { text: "People begin life as a 'blank slate' with equal potential for kindness or selfishness. Our choices and actions are what ultimately define our character.", value: "judaism" },
+                    { text: "People begin life with an innate leaning toward self-interest and wrongdoing that must be consciously recognized and addressed to achieve moral clarity.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Imagine a person commits a serious crime, evades justice, and moves to a new town. Years later, they are a respected community member but are haunted by remorse. To find ultimate peace, which path is more essential?",
+                weight: 5,
+                choices: [
+                    { text: "They must find the person or family they harmed and do everything possible to gain their forgiveness and make amends, as forgiveness between people is paramount.", value: "judaism" },
+                    { text: "They must turn wholeheartedly to a higher power, sincerely repenting and accepting the forgiveness that is offered through divine grace, which can cover any transgression.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the ideal role of a prophesied 'liberator' or world-changing figure?",
+                weight: 5,
+                choices: [
+                    { text: "To be a wise political and social architect who transforms public institutions, establishes lasting peace, and brings justice to society here on Earth.", value: "judaism" },
+                    { text: "To be a spiritual guide who offers a personal path to rescue from our inner flaws, primarily through an act of profound self-sacrifice.", value: "christianity" }
+                ]
+            },
+            {
+                question: "How should a community approach its foundational sacred texts?",
+                weight: 4,
+                choices: [
+                    { text: "View them as the starting point for a living conversation, drawing on centuries of communal debate and interpretation to uncover their meaning for today.", value: "judaism" },
+                    { text: "View them as the complete and final guide. The text itself is the ultimate authority, and the primary goal is to understand its original, intended message.", value: "christianity" },
+                    { text: "View them as one of two essential pillars of authority, alongside a sacred tradition that carries equal weight in interpreting their true meaning.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the primary measure of a devout and ethical life?",
+                weight: 5,
+                choices: [
+                    { text: "The consistent performance of prescribed ethical and ritual duties. A holy life is built through disciplined action and adherence to a sacred framework.", value: "judaism" },
+                    { text: "A deep, internal trust in a higher power's goodness. Ethical deeds are the natural and necessary fruit of this inner state, but the faith itself is the source.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Which is the more urgent and fundamental source of human suffering?",
+                weight: 4,
+                choices: [
+                    { text: "Broken social systems—injustice, poverty, and oppression. The most critical work is to reform society and create a just environment for all.", value: "judaism" },
+                    { text: "Broken inner lives—alienation, fear, and personal flaws. The most critical work is to seek personal, spiritual transformation from the inside out.", value: "christianity" }
+                ]
+            },
+            {
+                question: "When you personally fail or do something wrong, what is your first, most instinctive inner reaction?",
+                weight: 4,
+                choices: [
+                    { text: "A focus on the action and its consequences: 'I did the wrong thing, and now I must focus on fixing the concrete harm my action caused.'", value: "judaism" },
+                    { text: "A focus on your internal state: 'This action reveals a flaw inside me that needs to be healed or forgiven by a power greater than myself.'", value: "christianity" }
+                ]
+            },
+            {
+                question: "Which metaphor for the relationship between humanity and the Divine feels more accurate?",
+                weight: 4,
+                choices: [
+                    { text: "Covenantal partners. The Divine and humanity are bound by a timeless agreement with mutual duties and responsibilities, and our role is to uphold our end of the bargain.", value: "judaism" },
+                    { text: "A loving parent and lost children. The parent reaches out to welcome the children back through unconditional love, asking only for their trust in return.", value: "christianity" },
+                    { text: "A king and his beloved nation. The relationship is one of deep, intimate connection and national destiny, expressed through shared life and observance.", value: "judaism" }
+                ]
+            },
+            {
+                question: "A town's founding charter is based on an ancient, sacred legal code. A rule about finance is now unworkable in the modern economy. What is the best path forward?",
+                weight: 4,
+                choices: [
+                    { text: "Consult a council of scholars who are experts in the long tradition of interpreting this code. Trust their ability to study precedent and adapt the law's application without breaking from the tradition.", value: "judaism" },
+                    { text: "Focus on the overarching ethical principle behind the rule (e.g., 'prevent exploitation'). Then, create a new, modern regulation that applies this timeless spirit in a fresh way.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the ultimate hope for humanity's future?",
+                weight: 4,
+                choices: [
+                    { text: "The establishment of a perfected society here on Earth—a 'golden age' where war and injustice cease and all people live in peace and harmony.", value: "judaism" },
+                    { text: "A grand cosmic renewal in which this world is transformed, and redeemed individuals are granted an eternal existence in close communion with the Divine.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Which statement about human potential do you agree with more?",
+                weight: 5,
+                choices: [
+                    { text: "With enough discipline, wisdom, and effort, a person could, in principle, live a life entirely free of significant moral failure.", value: "judaism" },
+                    { text: "Moral failure is an inescapable part of the human condition. No one, on their own, can achieve a state of moral perfection.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Regarding the nature of a higher power, which idea is more compelling?",
+                weight: 5,
+                choices: [
+                    { text: "It is an absolutely singular, indivisible unity that is fundamentally beyond all physical form or human embodiment.", value: "judaism" },
+                    { text: "It is a single reality that is complex in its nature, capable of being experienced in distinct personal ways, including once having taken on a full human life.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the core purpose of major religious festivals, fasts, and ceremonies?",
+                weight: 4,
+                choices: [
+                    { text: "To fulfill timeless obligations that structure community life and infuse ordinary activities with a sense of the sacred, connecting us to a shared history.", value: "judaism" },
+                    { text: "To remember, reenact, and internalize a universal story of divine rescue, allowing individuals to personally receive the grace that this story offers.", value: "christianity" }
+                ]
+            },
+            {
+                question: "In seeking a spiritual mentor, which quality is more essential?",
+                weight: 3,
+                choices: [
+                    { text: "A deep mastery of a complex legal and ethical tradition, with the ability to reason through difficult questions by drawing on centuries of scholarly debate.", value: "judaism" },
+                    { text: "A profound clarity in explaining the core beliefs of a faith, drawing insights directly from the plain meaning of its foundational sacred texts.", value: "christianity" },
+                    { text: "A person who demonstrates profound compassion and models a life of service, regardless of their scholarly expertise.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the primary focus of one's daily spiritual attention?",
+                weight: 4,
+                choices: [
+                    { text: "Bringing a sense of holiness into your worldly activities—your work, family life, and community involvement. This is where the sacred is truly found.", value: "judaism" },
+                    { text: "Nurturing an inner state of faith and assurance regarding your ultimate spiritual destiny. This is the foundation for all other activities.", value: "christianity" }
+                ]
+            },
+            {
+                question: "A foundational text contains passages that appear to contradict each other. What is the wisest approach?",
+                weight: 4,
+                choices: [
+                    { text: "To delve into the layers of historical commentary from revered sages who have wrestled with these same passages, trusting that they have worked out sophisticated reconciliations.", value: "judaism" },
+                    { text: "To read these passages through the lens of what you understand to be the text's central, overarching themes, like love and redemption, letting the core message clarify the difficult parts.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Can full atonement be achieved for a wrong if the victim is dead or unreachable?",
+                weight: 5,
+                choices: [
+                    { text: "No, complete atonement is impossible. A wrong done against another person creates a debt that only the harmed party can forgive. The debt remains.", value: "judaism" },
+                    { text: "Yes, complete atonement is still possible. Sincere repentance and faith in a higher power can secure a full pardon, because a divine act of grace is sufficient for all wrongs.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the ultimate authority for your personal ethics?",
+                weight: 4,
+                choices: [
+                    { text: "A living and continuous legal tradition that has adapted a set of enduring, divine principles to guide conduct across generations.", value: "judaism" },
+                    { text: "The plain meaning of a foundational sacred text, which provides a direct moral compass for your conscience.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the primary identity marker of a person of faith?",
+                weight: 5,
+                choices: [
+                    { text: "Active participation in a community's shared covenantal practices, rituals, and way of life. Identity is communal and action-based.", value: "judaism" },
+                    { text: "An individual, personal decision to accept a core spiritual truth, which results in an inner sense of assurance and belonging.", value: "christianity" },
+                    { text: "Membership in a global spiritual family, confirmed by a specific rite of initiation like baptism.", value: "christianity" }
+                ]
+            },
+            {
+                question: "When you hold a deep conviction, what is the right way to share it?",
+                weight: 4,
+                choices: [
+                    { text: "To live out the truth of your conviction as a visible example to others, but to speak about your specific beliefs only when directly and sincerely asked.", value: "judaism" },
+                    { text: "To actively and openly share the message with others, in the earnest hope that they will embrace it for their own good, as it has universal importance.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Can a person become truly righteous through their own efforts?",
+                weight: 5,
+                choices: [
+                    { text: "Yes, righteousness is a goal that can be achieved. It is the product of steadfast observance of sacred laws, diligent study, and a lifetime of good deeds.", value: "judaism" },
+                    { text: "No, true righteousness cannot be earned by human effort, which is always imperfect. It must be received as a gift of grace from a higher power.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the primary driving force behind living a moral life?",
+                weight: 4,
+                choices: [
+                    { text: "A sense of duty. The highest motive for performing a good action is because it is commanded by a higher power and is part of a sacred obligation.", value: "judaism" },
+                    { text: "A sense of response. The highest motive for performing a good action is out of gratitude for the love and forgiveness one has already received.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Regarding a possible afterlife, which view is closer to yours?",
+                weight: 3,
+                choices: [
+                    { text: "There are certainly consequences for our actions after death, but the idea of a place of strictly eternal, conscious torment is not a central or certain doctrine.", value: "judaism" },
+                    { text: "The possibility of an eternal state of separation from all that is good, often called 'hell,' is a real and serious consequence for rejecting divine grace.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the central aim of personal transformation?",
+                weight: 4,
+                choices: [
+                    { text: "To align one's outward conduct and actions with a set of divine commands, thereby making one's life a testament to sacred law.", value: "judaism" },
+                    { text: "To align one's inner heart and mind with a spirit of divine grace, allowing one's actions to flow naturally from a transformed inner self.", value: "christianity" }
+                ]
+            },
+            {
+                question: "To what extent should human reason be relied upon in understanding the Divine?",
+                weight: 3,
+                choices: [
+                    { text: "Human logic has profound limits when it comes to the Divine. Ultimately, we must accept that its nature is a mystery that transcends our rational minds.", value: "judaism" },
+                    { text: "While the Divine has mysterious elements, careful reasoning and systematic thought are essential tools that can and should be used to outline and understand its nature and will.", value: "christianity" }
+                ]
+            },
+            {
+                question: "If the world is in crisis, what kind of leader is most needed?",
+                weight: 4,
+                choices: [
+                    { text: "A unifying and wise statesperson who can reform global structures, establish justice through law, and build lasting peace between nations.", value: "judaism" },
+                    { text: "A transformative moral teacher who can inspire interior renewal on a massive scale, healing society by healing the hearts of its individuals.", value: "christianity" }
+                ]
+            },
+            {
+                question: "Should a nation's civil laws be based on an ancient sacred code?",
+                weight: 4,
+                choices: [
+                    { text: "Yes, a society can and should anchor its statutes in an ancient, divinely inspired code, provided it is interpreted and applied by contemporary experts within that tradition.", value: "judaism" },
+                    { text: "No, civil law should be based on broad, universal ideals like fairness, liberty, and love, which may be inspired by sacred texts but should not be tied to any specific ancient code.", value: "christianity" }
+                ]
+            },
+            {
+                question: "The idea that the Divine itself could become a single, specific, mortal human being is...",
+                weight: 5,
+                choices: [
+                    { text: "A profound contradiction. It compromises the core principles of the Divine's absolute oneness, timelessness, and non-physical nature.", value: "judaism" },
+                    { text: "The ultimate expression of divine love. It bridges the gap between the infinite and the finite, making a higher power supremely relatable and accessible.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the ultimate scope of divine forgiveness?",
+                weight: 5,
+                choices: [
+                    { text: "There are limits. Some acts, particularly those where direct restitution to the victim is impossible, may remain beyond the reach of complete absolution.", value: "judaism" },
+                    { text: "It is limitless. There is no human act so grievous that it lies outside the reach of atonement, which was made possible by a singular, all-encompassing divine act.", value: "christianity" }
+                ]
+            },
+            {
+                question: "What is the most important emphasis of public religious celebrations?",
+                weight: 3,
+                choices: [
+                    { text: "Commemorating key events in a specific community's unique history and reinforcing the collective memory and identity of its people.", value: "judaism" },
+                    { text: "Celebrating pivotal moments in a universal story of redemption that is meant to be shared with all of humanity.", value: "christianity" }
+                ]
+            }
+        ];
+
+        // DOM Elements
+        const startScreen = document.getElementById('start-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const startBtn = document.getElementById('start-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const backBtn = document.getElementById('back-btn');
+        const retakeBtn = document.getElementById('retake-btn');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const questionNumber = document.getElementById('question-number');
+        const progressBar = document.getElementById('progress-bar');
+        const progressPercent = document.getElementById('progress-percent');
+
+        // Quiz State
+        let currentQuestionIndex = 0;
+        let userAnswers = [];
+        const totalWeight = questions.reduce((sum, q) => sum + q.weight, 0);
+
+        // Event Listeners
+        startBtn.addEventListener('click', startQuiz);
+        nextBtn.addEventListener('click', handleNextQuestion);
+        backBtn.addEventListener('click', handleBack);
+        retakeBtn.addEventListener('click', startQuiz);
+
+        // Functions
+        function startQuiz() {
+            currentQuestionIndex = 0;
+            userAnswers = new Array(questions.length).fill(null);
+            
+            // Shuffle choices for each question once at the start
+            questions.forEach(q => {
+                q.shuffledChoices = [...q.choices].sort(() => Math.random() - 0.5);
+            });
+
+            startScreen.classList.add('hidden');
+            resultScreen.classList.add('hidden');
+            quizScreen.classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            let selectedAnswerValue = userAnswers[currentQuestionIndex];
+            resetOptionStyles();
+            const currentQuestion = questions[currentQuestionIndex];
+            questionText.textContent = currentQuestion.question;
+            optionsContainer.innerHTML = '';
+
+            const shuffledChoices = currentQuestion.shuffledChoices;
+
+            shuffledChoices.forEach((choice, index) => {
+                const optionLetter = String.fromCharCode(65 + index); // A, B, C...
+                const optionElement = document.createElement('div');
+                optionElement.classList.add('option-card', 'p-4', 'border-2', 'border-gray-200', 'rounded-lg', 'cursor-pointer', 'hover:border-indigo-400');
+                optionElement.innerHTML = `<span class="font-bold mr-2">${optionLetter}.</span><span>${choice.text}</span>`;
+                optionElement.dataset.value = choice.value; // Store 'judaism' or 'christianity'
+                optionElement.addEventListener('click', () => selectAnswer(optionElement));
+                optionsContainer.appendChild(optionElement);
+
+                if (choice.value === selectedAnswerValue) {
+                    optionElement.classList.add('selected');
+                }
+            });
+
+            updateProgress();
+            updateNavigationButtons();
+        }
+
+        function selectAnswer(optionElement) {
+            resetOptionStyles();
+            optionElement.classList.add('selected');
+            userAnswers[currentQuestionIndex] = optionElement.dataset.value;
+            enableNextButton();
+        }
+
+        function handleNextQuestion() {
+            if (userAnswers[currentQuestionIndex] === null) return;
+
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < questions.length) {
+                showQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function handleBack() {
+            if (currentQuestionIndex > 0) {
+                currentQuestionIndex--;
+                showQuestion();
+            }
+        }
+
+        function showResults() {
+            quizScreen.classList.add('hidden');
+            resultScreen.classList.remove('hidden');
+
+            let judaismScore = 0;
+            let christianityScore = 0;
+
+            for (let i = 0; i < questions.length; i++) {
+                if (userAnswers[i] === 'judaism') {
+                    judaismScore += questions[i].weight;
+                } else if (userAnswers[i] === 'christianity') {
+                    christianityScore += questions[i].weight;
+                }
+            }
+
+            const judaismPercent = totalWeight > 0 ? Math.round((judaismScore / totalWeight) * 100) : 0;
+            const christianityPercent = totalWeight > 0 ? Math.round((christianityScore / totalWeight) * 100) : 0;
+
+            document.getElementById('judaism-score-percent').textContent = `${judaismPercent}%`;
+            document.getElementById('christianity-score-percent').textContent = `${christianityPercent}%`;
+            
+            document.getElementById('judaism-bar').style.width = `${judaismPercent}%`;
+            document.getElementById('christianity-bar').style.width = `${christianityPercent}%`;
+
+            const finalResultText = document.getElementById('final-result-text');
+            if (judaismScore > christianityScore) {
+                finalResultText.textContent = "Judaism";
+                finalResultText.style.color = '#3b82f6'; // blue-500
+            } else if (christianityScore > judaismScore) {
+                finalResultText.textContent = "Christianity";
+                finalResultText.style.color = '#ef4444'; // red-500
+            } else {
+                finalResultText.textContent = "A Balanced Perspective";
+                finalResultText.style.color = '#6b7280'; // gray-500
+            }
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            const displayProgress = ((currentQuestionIndex + 1) / questions.length) * 100;
+            questionNumber.textContent = currentQuestionIndex + 1;
+            progressBar.style.width = `${displayProgress}%`;
+            progressPercent.textContent = `${Math.round(progress)}%`;
+        }
+        
+        function resetOptionStyles() {
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+        }
+
+        function updateNavigationButtons() {
+            if (currentQuestionIndex === 0) {
+                backBtn.classList.add('hidden');
+            } else {
+                backBtn.classList.remove('hidden');
+            }
+
+            if (userAnswers[currentQuestionIndex]) {
+                enableNextButton();
+            } else {
+                disableNextButton();
+            }
+        }
+
+        function disableNextButton() {
+            nextBtn.disabled = true;
+            nextBtn.classList.add('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+            nextBtn.classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+        }
+
+        function enableNextButton() {
+            nextBtn.disabled = false;
+            nextBtn.classList.remove('bg-gray-300', 'text-gray-500', 'cursor-not-allowed');
+            nextBtn.classList.add('bg-indigo-600', 'text-white', 'hover:bg-indigo-700');
+        }
+
+    </script>
+</body>
+</html>
