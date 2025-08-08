@@ -23,7 +23,8 @@
     .logo svg{width:100%;height:100%;display:block}
     .title{line-height:1}
     .title .kicker{font-size:12px;color:var(--muted)}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#0e1533;border:1px solid rgba(255,255,255,.08);font-size:14px}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#0e1533;border:1px solid rgba(255,255,255,.08);font-size:14px;cursor:pointer;transition: background .2s}
+    .pill:hover{background:#1c264f;}
     .stat{display:inline-flex;align-items:center;gap:8px}
     .stat .dot{width:10px;height:10px;border-radius:50%}
     .dot.xp{background:var(--accent)}
@@ -33,7 +34,7 @@
     @media (max-width:920px){.content{grid-template-columns:1fr}}
 
     /* Sidebar */
-    .sidebar{position:sticky;top:72px;align-self:start;display:flex;flex-direction:column;gap:14px}
+    .sidebar{position:sticky;top:92px;align-self:start;display:flex;flex-direction:column;gap:14px}
     .card{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:16px}
     .card h3{margin:0 0 8px}
     .select{display:grid;gap:10px}
@@ -58,17 +59,22 @@
     .sheet header{display:flex;justify-content:space-between;align-items:center}
     .sheet h3{margin:0}
     .close{background:#0e1633;border:1px solid rgba(255,255,255,.1);color:var(--ink);border-radius:12px;padding:8px 10px;cursor:pointer}
-    .q{margin-top:14px;background:#0f1840;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px}
-    .answers{display:grid;gap:10px;margin-top:12px}
-    .answers button{background:#0f1840;border:1px solid rgba(255,255,255,.08);color:var(--ink);padding:12px;border-radius:14px;text-align:left;cursor:pointer}
-    .answers button.correct{outline:2px solid var(--accent)}
-    .answers button.incorrect{outline:2px solid var(--bad)}
-    .actions{display:flex;gap:10px;justify-content:flex-end;margin-top:16px}
-    .primary{background:linear-gradient(135deg,var(--accent),#b6ffb0);color:#061a06;border:0;padding:10px 14px;border-radius:12px;font-weight:800;cursor:pointer}
+    .q{margin-top:14px;background:#0f1840;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;font-size:1.1rem}
+    .answers{display:grid;gap:10px;margin-top:12px;grid-template-columns: 1fr 1fr;}
+    .answers button{background:#0f1840;border:1px solid rgba(255,255,255,.08);color:var(--ink);padding:14px;border-radius:14px;text-align:left;cursor:pointer;font-size: 1rem; transition: background .2s, transform .2s;}
+    .answers button:hover:not(:disabled) { background: #1c264f; transform: translateY(-1px); }
+    .answers button.correct{outline:2px solid var(--accent); background: rgba(138, 255, 128, 0.1);}
+    .answers button.incorrect{outline:2px solid var(--bad); background: rgba(255, 122, 122, 0.1);}
+    .answers button:disabled { cursor: not-allowed; opacity: 0.7; }
+    .answers input:disabled { cursor: not-allowed; background: #0b112a !important; }
+    .actions{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:16px}
+    .primary{background:linear-gradient(135deg,var(--accent),#b6ffb0);color:#061a06;border:0;padding:10px 16px;border-radius:12px;font-weight:800;cursor:pointer}
+    .primary:disabled { background: var(--muted); cursor: not-allowed; opacity: 0.5; }
     .ghost{background:#0e1633;border:1px solid rgba(255,255,255,.1);color:var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer}
+    #hintBtn { background: #2a325c; }
 
     /* Toast & confetti */
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#0e1633;border:1px solid rgba(255,255,255,.1);padding:10px 14px;border-radius:12px;display:none;z-index:70}
+    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#0e1633;border:1px solid rgba(255,255,255,.1);padding:12px 18px;border-radius:12px;display:none;z-index:70;font-weight: 600;}
     .toast.show{display:block;animation:pop .2s ease}
     @keyframes pop{from{transform:translate(-50%,10px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
     .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
@@ -83,7 +89,6 @@
   <div id="app">
     <div class="topbar">
       <div class="brand">
-        <!-- Improved logo -->
         <div class="logo" aria-hidden="true" title="L+Y">
           <svg viewBox="0 0 100 100" role="img" aria-label="L plus Y logo">
             <defs>
@@ -131,16 +136,16 @@
         <div class="card">
           <h3>Daily Goal</h3>
           <div class="row">
-            <button class="pill" data-goal="10">🥉 Casual (10 XP)</button>
-            <button class="pill" data-goal="30">🥈 Regular (30 XP)</button>
-            <button class="pill" data-goal="50">🥇 Intense (50 XP)</button>
+            <button class="pill" data-goal="10">🥉 10 XP</button>
+            <button class="pill" data-goal="30">🥈 30 XP</button>
+            <button class="pill" data-goal="50">🥇 50 XP</button>
           </div>
           <div class="small" id="goalText" style="margin-top:8px">Goal: 10 XP/day</div>
         </div>
         <div class="card">
           <h3>Audio</h3>
           <div class="row"><button class="pill" id="voiceTest">🔊 Test voice</button><button class="pill" id="micTest">🎤 Test mic</button></div>
-          <div class="small muted" id="audioStatus" style="margin-top:8px">Web Speech API for TTS/STT (falls back gracefully if unavailable).</div>
+          <div class="small muted" id="audioStatus" style="margin-top:8px">Web Speech API for TTS/STT.</div>
         </div>
         <div class="card">
           <h3>Profile & Backup</h3>
@@ -154,7 +159,7 @@
           <h2 style="margin:0 0 8px">Course Map — <span id="courseTitle">Select a course</span></h2>
           <div class="lesson-grid" id="grid" aria-live="polite"></div>
         </div>
-        <div class="small muted" style="margin-top:8px">Progress, XP, and streak are saved in your browser (local). Export/Import to move between devices.</div>
+        <div class="small muted" style="margin-top:8px">Progress, XP, and streak are saved in your browser. Export/Import to move between devices.</div>
       </main>
     </div>
   </div>
@@ -168,7 +173,14 @@
       </header>
       <div class="q" id="question">Loading…</div>
       <div class="answers" id="answers"></div>
-      <div class="actions"><button class="ghost" id="playAudio">🔊 Play</button><button class="ghost" id="speakBtn">🎤 Speak</button><button class="primary" id="next">Next ➜</button></div>
+      <div class="actions">
+        <div class="row">
+          <button class="ghost" id="hintBtn">💡 Hint</button>
+          <button class="ghost" id="playAudio">🔊 Play</button>
+          <button class="ghost" id="speakBtn">🎤 Speak</button>
+        </div>
+        <button class="primary" id="checkBtn">Check</button>
+      </div>
     </div>
   </div>
 
@@ -176,9 +188,9 @@
   <div class="confetti" id="confetti" aria-hidden="true"></div>
 
   <script>
-  /****************************
-   *   L+Y — core logic v2   *
-   ****************************/
+  /***********************************
+   * L+Y — core logic v3 (enhanced) *
+   ***********************************/
 
   // ——— utilities
   const $ = (sel, root=document) => root.querySelector(sel);
@@ -187,16 +199,14 @@
 
   // Deterministic PRNG for reproducible daily sets
   function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
-  function seededShuffle(arr, seed){const r=mulberry32(seed);const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()* (i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+  function seededShuffle(arr, seed){const r=mulberry32(seed);const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
 
   // Normalize (serverless, no Unicode escape usage in source)
   function stripDiacritics(s){
     const map = {'ë':'e','Ë':'e','ç':'c','Ç':'c','á':'a','à':'a','ä':'a','é':'e','è':'e','ê':'e','í':'i','ì':'i','ï':'i','ó':'o','ò':'o','ö':'o','ú':'u','ù':'u','ü':'u'};
     return s.replace(/[ëËçÇáàäéèêíìïóòöúùü]/g, ch => map[ch] || ch);
   }
-  function norm(s){
-    return stripDiacritics((s||'').toString().trim().toLowerCase()).replace(/ +/g,' ');
-  }
+  function norm(s){ return stripDiacritics((s||'').toString().trim().toLowerCase()).replace(/ +/g,' ') }
 
   // Timezone‑aware date key (no server clock)
   function tzLocalDateKey(){
@@ -218,7 +228,7 @@
 
   // Confetti + toast
   const toastEl = $('#toast');
-  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'), 1800) }
+  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'), 2200) }
   const confettiEl = $('#confetti');
   function confetti(){ for(let i=0;i<80;i++){ const p=document.createElement('div'); p.className='piece'; p.style.left=Math.random()*100+'vw'; p.style.top='-10px'; p.style.background=['#8aff80','#70d6ff','#ffd166','#ff7a7a'][i%4]; p.style.animationDelay=(Math.random()*0.6)+'s'; confettiEl.appendChild(p); setTimeout(()=>p.remove(),1500) } }
 
@@ -233,37 +243,30 @@
   function load(){ state = {...state, ...store.get()}; updateTopbar(); updateProgressPills(); $('#deviceInfo').textContent = `Device: ${state.device}` }
   function save(){ store.set(state) }
 
-  // Courses generated from vocab pools (100 days each)
+  // Vocabulary Pools
   const HE_VOCAB = [
     {t:'שלום', e:'hello'},{t:'תודה', e:'thank you'},{t:'בבקשה', e:'please'},{t:'סליחה', e:'sorry'},{t:'כן', e:'yes'},{t:'לא', e:'no'},{t:'בוקר טוב', e:'good morning'},{t:'לילה טוב', e:'good night'},{t:'מה נשמע?', e:'how are you?'},{t:'טוב', e:'good'},{t:'רע', e:'bad'},{t:'אוכל', e:'food'},{t:'מים', e:'water'},{t:'לחם', e:'bread'},{t:'קפה', e:'coffee'},{t:'תה', e:'tea'},{t:'חלב', e:'milk'},{t:'יין', e:'wine'},{t:'בירה', e:'beer'},{t:'תפוח', e:'apple'},{t:'בננה', e:'banana'},{t:'עוף', e:'chicken'},{t:'בקר', e:'beef'},{t:'דג', e:'fish'},{t:'ירקות', e:'vegetables'},{t:'פרי', e:'fruit'},{t:'בית', e:'home'},{t:'מלון', e:'hotel'},{t:'מסעדה', e:'restaurant'},{t:'תחנת רכבת', e:'train station'},{t:'תחנה', e:'station'},{t:'שדה תעופה', e:'airport'},{t:'אוטובוס', e:'bus'},{t:'מונית', e:'taxi'},{t:'כרטיס', e:'ticket'},{t:'שירותים', e:'bathroom'},{t:'ימין', e:'right'},{t:'שמאל', e:'left'},{t:'איפה', e:'where'},{t:'מתי', e:'when'},{t:'כמה', e:'how much'},{t:'מה', e:'what'},{t:'מי', e:'who'},{t:'אני', e:'I'},{t:'אתה', e:'you (m.)'},{t:'את', e:'you (f.)'},{t:'הוא', e:'he'},{t:'היא', e:'she'},{t:'אנחנו', e:'we'},{t:'הם', e:'they'},{t:'רוצה', e:'want'},{t:'צריך', e:'need'},{t:'יש לי', e:'I have'},{t:'אין לי', e:"I don't have"},{t:'אני מבין', e:'I understand (m.)'},{t:'אני לא מבין', e:"I don't understand (m.)"},{t:'עזרה', e:'help'},{t:'רופא', e:'doctor'},{t:'משטרה', e:'police'},{t:'חנות', e:'shop'},{t:'רחוב', e:'street'},{t:'עיר', e:'city'},{t:'כסף', e:'money'},{t:'זמן', e:'time'},{t:'יום', e:'day'},{t:'לילה', e:'night'},{t:'היום', e:'today'},{t:'מחר', e:'tomorrow'},{t:'אתמול', e:'yesterday'},{t:'פתוח', e:'open'},{t:'סגור', e:'closed'},{t:'חם', e:'hot'},{t:'קר', e:'cold'},{t:'יפה', e:'beautiful'},{t:'טעים', e:'tasty'},{t:'גדול', e:'big'},{t:'קטן', e:'small'},{t:'לאט', e:'slow'},{t:'מהר', e:'fast'},{t:'נסיעה', e:'trip'},{t:'כיוון', e:'direction'},{t:'כרטיס אשראי', e:'credit card'},{t:'חשבון', e:'bill'},{t:'ים', e:'sea'},{t:'חוף', e:'beach'}
   ];
-
   const SQ_VOCAB = [
     {t:'përshëndetje', e:'hello'},{t:'faleminderit', e:'thank you'},{t:'ju lutem', e:'please'},{t:'më falni', e:'sorry'},{t:'po', e:'yes'},{t:'jo', e:'no'},{t:'mirëmëngjes', e:'good morning'},{t:'natë e mirë', e:'good night'},{t:'si je?', e:'how are you?'},{t:'mirë', e:'good'},{t:'keq', e:'bad'},{t:'ushqim', e:'food'},{t:'ujë', e:'water'},{t:'bukë', e:'bread'},{t:'kafe', e:'coffee'},{t:'çaj', e:'tea'},{t:'qumësht', e:'milk'},{t:'verë', e:'wine'},{t:'birrë', e:'beer'},{t:'mollë', e:'apple'},{t:'banane', e:'banana'},{t:'pulë', e:'chicken'},{t:'mish viçi', e:'beef'},{t:'peshk', e:'fish'},{t:'perime', e:'vegetables'},{t:'frut', e:'fruit'},{t:'shtëpi', e:'home'},{t:'hotel', e:'hotel'},{t:'restorant', e:'restaurant'},{t:'stacioni i trenit', e:'train station'},{t:'stacion', e:'station'},{t:'aeroport', e:'airport'},{t:'autobus', e:'bus'},{t:'taksi', e:'taxi'},{t:'biletë', e:'ticket'},{t:'banjë', e:'bathroom'},{t:'djathtas', e:'right'},{t:'majtas', e:'left'},{t:'ku', e:'where'},{t:'kur', e:'when'},{t:'sa', e:'how much'},{t:'çfarë', e:'what'},{t:'kush', e:'who'},{t:'unë', e:'I'},{t:'ti', e:'you'},{t:'ai', e:'he'},{t:'ajo', e:'she'},{t:'ne', e:'we'},{t:'ata', e:'they'},{t:'dua', e:'want'},{t:'duhet', e:'need'},{t:'kam', e:'I have'},{t:'nuk kam', e:"I don't have"},{t:'kuptoj', e:'I understand'},{t:'nuk kuptoj', e:"I don't understand"},{t:'ndihmë', e:'help'},{t:'mjek', e:'doctor'},{t:'policia', e:'police'},{t:'dyqan', e:'shop'},{t:'rrugë', e:'street'},{t:'qytet', e:'city'},{t:'para', e:'money'},{t:'kohë', e:'time'},{t:'ditë', e:'day'},{t:'natë', e:'night'},{t:'sot', e:'today'},{t:'nesër', e:'tomorrow'},{t:'dje', e:'yesterday'},{t:'hapur', e:'open'},{t:'mbyllur', e:'closed'},{t:'nxehtë', e:'hot'},{t:'ftohtë', e:'cold'},{t:'bukur', e:'beautiful'},{t:'i shijshëm', e:'tasty'},{t:'i madh', e:'big'},{t:'i vogël', e:'small'},{t:'ngadalë', e:'slow'},{t:'shpejt', e:'fast'},{t:'udhëtim', e:'trip'},{t:'drejtim', e:'direction'},{t:'kartë krediti', e:'credit card'},{t:'faturë', e:'bill'},{t:'det', e:'sea'},{t:'plazh', e:'beach'}
   ];
 
+  // Course generation
   function buildCourse(lang){
     const pool = lang==='he'? HE_VOCAB : SQ_VOCAB;
     const label = lang==='he'? 'Hebrew (עברית)' : 'Albanian (Shqip)';
     const code = lang==='he'? 'he-IL' : 'sq-AL';
     const skills = [];
     for(let day=1; day<=100; day++){
-      skills.push({ id:`${lang}-day-${day}`, name:`Day ${day}`, badge: day%10===0? '⭐':'📘', lessons: makeDayLessons(pool, lang, code, day) });
+      skills.push({ id:`${lang}-day-${day}`, name:`Day ${day}`, badge: day%10===0? '⭐':'📘', lessons: makeDayLessons(pool, lang, day) });
     }
     return { name:label, code, from:'English', skills };
   }
 
-  function pickN(pool, n, seed){
-    const shuffled = seededShuffle(pool, seed);
-    return shuffled.slice(0, n);
-  }
+  function pickN(pool, n, seed){ return seededShuffle(pool, seed).slice(0, n) }
+  function makeDistractors(pool, correct, n, seed){ return seededShuffle(pool.filter(x=>x!==correct), seed).slice(0, n).map(x=> x.e) }
 
-  function makeDistractors(pool, correct, n, seed){
-    const others = pool.filter(x=>x!==correct);
-    return seededShuffle(others, seed).slice(0, n).map(x=> x.e);
-  }
-
-  function makeDayLessons(pool, lang, code, day){
+  function makeDayLessons(pool, lang, day){
     const seedBase = (lang==='he'? 101 : 202) + day*73;
     const items = pickN(pool, 4, seedBase);
     const L = [];
@@ -280,7 +283,6 @@
     return L;
   }
 
-  // Runtime course registry (generated on demand)
   const COURSES = { he: buildCourse('he'), sq: buildCourse('sq') };
 
   // UI rendering
@@ -293,8 +295,9 @@
     course.skills.forEach((skill,i)=>{
       const div = document.createElement('div');
       div.className='skill';
-      div.innerHTML = `<div class="badge">${skill.badge}</div><h4>${i+1}. ${skill.name}</h4><div class="meta">${skill.lessons.length} exercises</div><button data-skill="${skill.id}">${state.progress[skill.id]?.completed? 'Review' : 'Start ➜'}</button>`;
-      if(state.progress[skill.id]?.completed){ const done=document.createElement('div'); done.className='small'; done.style.cssText='position:absolute;bottom:10px;right:12px;color:var(--accent);font-weight:800'; done.textContent='✓ Complete'; div.appendChild(done) }
+      const isCompleted = state.progress[skill.id]?.completed;
+      div.innerHTML = `<div class="badge">${skill.badge}</div><h4>${i+1}. ${skill.name}</h4><div class="meta">${skill.lessons.length} exercises</div><button data-skill="${skill.id}">${isCompleted? 'Review' : 'Start ➜'}</button>`;
+      if(isCompleted){ const done=document.createElement('div'); done.className='small'; done.style.cssText='position:absolute;bottom:10px;right:12px;color:var(--accent);font-weight:800'; done.textContent='✓ Complete'; div.appendChild(done) }
       grid.appendChild(div);
     })
   }
@@ -305,7 +308,7 @@
     $('#progress-he').textContent = pct('he')+'%'; $('#progress-sq').textContent = pct('sq')+'%'
   }
 
-  // Streak logic (timezone‑aware; serverless)
+  // Streak logic
   function touchStreak(){
     const key = tzLocalDateKey();
     if(state.lastActiveKey===key){ /* same day */ }
@@ -319,8 +322,9 @@
     state.lastActiveKey = key;
   }
 
-  // Exercise engine
+  // --- Exercise engine ---
   let queue=[]; let skillId=null; let index=0; let currentLangCode='en-US';
+  let isAnswered = false; // NEW: track if current question is graded
   const modal = $('#modal'); const qEl = $('#question'); const aEl = $('#answers'); const titleEl = $('#exerciseTitle'); const livesEl = $('#lives');
 
   const tts = {
@@ -332,44 +336,127 @@
 
   function startSkill(id){
     const course = COURSES[state.lang]; const skill = course.skills.find(s=>s.id===id); if(!skill) return;
-    skillId=id; queue=[...skill.lessons]; index=0; state.lives=3; updateLives(); currentLangCode=course.code; titleEl.textContent = `${skill.name} (${course.name})`; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; recognizer=initSTT(); nextExercise();
+    skillId=id; queue=[...skill.lessons]; index=0; state.lives=3; isAnswered=false; updateLives(); currentLangCode=course.code; titleEl.textContent = `${skill.name} (${course.name})`; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; recognizer=initSTT(); nextExercise();
   }
-  function updateLives(){ livesEl.textContent = '❤️'.repeat(state.lives)+' '+ '♡'.repeat(3-state.lives) }
-  function endSkill(win){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='auto'; if(win){ state.xp += 10; touchStreak(); state.progress[skillId]={completed:true,crowns:1}; confetti(); toast('⭐ Skill complete! +10 XP'); updateTopbar(); updateProgressPills(); renderCourse(); save() } else { toast('💔 Out of lives. Try again!') } }
+  function updateLives(){ livesEl.textContent = '❤️'.repeat(state.lives)+' '+ '♡'.repeat(clamp(3-state.lives, 0, 3)) }
+  function endSkill(win){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='auto'; if(win){ state.xp += 10; touchStreak(); state.progress[skillId]={completed:true,crowns:1}; confetti(); toast('⭐ Skill complete! +10 XP'); updateTopbar(); updateProgressPills(); renderCourse(); save() } else { toast('💔 Out of lives. Review and try again!') } }
 
-  function nextExercise(){ if(index>=queue.length) return endSkill(true); const ex=queue[index]; aEl.innerHTML=''; qEl.innerHTML = ex.prompt; $('#playAudio').classList.toggle('hidden', !('tts' in ex)); $('#speakBtn').classList.toggle('hidden', ex.type!=='speak');
+  function nextExercise(){
+    if(index >= queue.length) return endSkill(true);
+    if(state.lives <= 0) return endSkill(false);
+    isAnswered = false;
+    const ex = queue[index];
+    aEl.innerHTML = '';
+    qEl.innerHTML = ex.prompt;
+    $('#playAudio').classList.toggle('hidden', !ex.tts);
+    $('#speakBtn').classList.toggle('hidden', ex.type !== 'speak');
+    $('#hintBtn').classList.remove('hidden');
+    const checkBtn = $('#checkBtn');
+    checkBtn.disabled = false;
+
     if(ex.dir){ qEl.setAttribute('dir', ex.dir) } else { qEl.removeAttribute('dir') }
-    if(ex.type==='mc' || ex.type==='tts'){ const choices=[...(ex.choices||[])]; choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c; b.onclick=()=>grade(norm(c)===norm(ex.answer), b); aEl.appendChild(b) }) }
-    if(ex.type==='type' || ex.type==='tts'){ const input=document.createElement('input'); input.placeholder='Type your answer…'; input.style.cssText='padding:12px;width:100%;border-radius:12px;background:#0f1840;border:1px solid rgba(255,255,255,.12);color:var(--ink)'; if(ex.dir) input.setAttribute('dir',ex.dir); aEl.appendChild(input) }
-    if(ex.type==='speak'){ const hint=document.createElement('div'); hint.className='small muted'; hint.textContent = "Click 🎤 Speak, say the phrase, we'll auto‑check."; aEl.appendChild(hint) }
+
+    if(ex.type==='mc' || (ex.type==='tts' && ex.choices)){
+      checkBtn.classList.add('hidden');
+      const choices=[...(ex.choices||[])];
+      choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c; b.onclick=()=>grade(norm(c)===norm(ex.answer), b); aEl.appendChild(b) })
+    } else if(ex.type==='type' || (ex.type==='tts' && !ex.choices)){
+      checkBtn.classList.remove('hidden');
+      checkBtn.textContent = 'Check';
+      const input=document.createElement('input'); input.placeholder='Type your answer…'; input.autocomplete="off"; input.spellcheck=false;
+      input.style.cssText='padding:14px;width:100%;border-radius:12px;background:#0f1840;border:1px solid rgba(255,255,255,.12);color:var(--ink);font-size:1rem;grid-column: 1 / -1;';
+      if(ex.dir) input.setAttribute('dir',ex.dir);
+      aEl.appendChild(input);
+      input.focus();
+    } else if(ex.type==='speak'){
+      checkBtn.classList.add('hidden');
+      const hint=document.createElement('div'); hint.className='small muted'; hint.style.gridColumn = '1 / -1'; hint.textContent = "Click 🎤 Speak, say the phrase, we'll auto‑check."; aEl.appendChild(hint)
+    }
     if(ex.tts){ tts.speak(ex.tts, currentLangCode) }
   }
 
-  function grade(correct, btn){ if(btn){ btn.classList.add(correct?'correct':'incorrect') } if(correct){ toast('✅ Correct'); index++; setTimeout(nextExercise, 320) } else { toast('❌ Try again'); state.lives--; updateLives(); if(state.lives<=0) endSkill(false) } }
+  function grade(correct, btn) {
+    if (isAnswered) return;
+    isAnswered = true;
 
-  // Events
+    $$('#answers button, #answers input').forEach(el => el.disabled = true);
+    const checkBtn = $('#checkBtn');
+    checkBtn.textContent = 'Continue ➜';
+    checkBtn.classList.remove('hidden');
+
+    if (btn) { btn.classList.add(correct ? 'correct' : 'incorrect') }
+    const input = aEl.querySelector('input');
+    if (input) { input.style.outline = `2px solid var(--${correct ? 'accent' : 'bad'})` }
+
+    if (correct) {
+      toast('✅ Correct!');
+    } else {
+      toast(`❌ Correct answer: ${queue[index].answer}`);
+      state.lives--;
+      updateLives();
+      if (state.lives <= 0) {
+        setTimeout(() => endSkill(false), 2000);
+      }
+    }
+  }
+
+  // --- Event Listeners ---
   document.addEventListener('click', (e)=>{
-    const t=e.target;
+    const t=e.target.closest('button'); // Use closest to handle clicks on icons inside buttons
+    if(!t) return;
+
     if(t.matches('.select button[data-lang]')){ state.lang=t.getAttribute('data-lang'); save(); renderCourse() }
     if(t.matches('.skill button[data-skill]')) startSkill(t.getAttribute('data-skill'));
     if(t.matches('#close')) endSkill(false);
-    if(t.matches('#next')){
-      const ex=queue[index]; if(ex){ if(ex.type==='type' || ex.type==='tts'){ const val=aEl.querySelector('input')?.value||''; const ans=ex.answer||''; grade(norm(val)===norm(ans)) } else if(ex.type==='mc'){ toast('Pick an option') } else if(ex.type==='speak'){ toast('Use 🎤 Speak to answer') } }
+
+    if(t.matches('#checkBtn')){
+      if(isAnswered) {
+        index++;
+        nextExercise();
+      } else {
+        const ex=queue[index];
+        const input=aEl.querySelector('input');
+        if(input){ const val=input.value||''; const ans=ex.answer||''; grade(norm(val)===norm(ans)) }
+      }
     }
+
+    if(t.matches('#hintBtn')){
+      if (isAnswered) return;
+      const ex = queue[index];
+      toast(`💡 Hint: ${ex.answer}`);
+      const input = aEl.querySelector('input');
+      if (input) { input.value = ex.answer; input.focus(); }
+    }
+
     if(t.matches('#playAudio')){ const ex=queue[index]; if(ex?.tts) tts.speak(ex.tts, currentLangCode) }
     if(t.matches('#speakBtn')){
-      if(!canSTT()) return toast('🎤 Speech recognition not supported here');
-      const ex=queue[index]; if(ex.type!=='speak') return; try{ recognizer=initSTT(); recognizer.onresult=(ev)=>{ const said=ev.results[0][0].transcript; grade(norm(said)===norm(ex.answer)) }; recognizer.onerror=()=> toast('Mic error. Try again.'); recognizer.start(); toast('Listening…') }catch(err){ toast('Mic blocked. Allow microphone and retry.') }
+      if(!canSTT()) return toast('🎤 Speech recognition not supported');
+      const ex=queue[index]; if(ex.type!=='speak') return;
+      try{
+        recognizer=initSTT();
+        recognizer.onresult=(ev)=>{ const said=ev.results[0][0].transcript; grade(norm(said)===norm(ex.answer)) };
+        recognizer.onerror=()=> toast('Mic error. Try again.');
+        recognizer.start();
+        toast('Listening…')
+      }catch(err){ toast('Mic blocked. Allow microphone and retry.') }
     }
+
     if(t.matches('[data-goal]')){ state.goal=Number(t.getAttribute('data-goal')); save(); $('#goalText').textContent=`Goal: ${state.goal} XP/day`; toast('Goal updated') }
     if(t.matches('#voiceTest')){ tts.speak('Welcome to L plus Y!', 'en-US') }
     if(t.matches('#micTest')){ toast(canSTT()? '🎤 Mic available' : '🎤 Not supported in this browser') }
+
     if(t.matches('#exportBtn')){ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ly-save.json'; a.click(); URL.revokeObjectURL(url); toast('Save exported') }
     if(t.matches('#importBtn')){ const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=(ev)=>{ const f=ev.target.files[0]; if(!f) return; const reader=new FileReader(); reader.onload=()=>{ try{ const data=JSON.parse(reader.result); state={...state,...data}; save(); load(); renderCourse(); toast('Save imported') }catch{ toast('Invalid file') } }; reader.readAsText(f) }; inp.click() }
-    if(t.matches('#resetBtn')){ if(confirm('Reset all progress?')){ localStorage.removeItem('ly-data'); state={lang:null,xp:0,streak:0,lastActiveKey:null,goal:10,progress:{},lives:3,device:deviceId()}; load(); renderCourse(); toast('Progress reset') } }
+    if(t.matches('#resetBtn')){
+      // NOTE: confirm() can be blocked in sandboxed environments like CodePen or some iframes.
+      if(confirm('Reset all progress? This cannot be undone.')){ localStorage.removeItem('ly-data'); state={lang:null,xp:0,streak:0,lastActiveKey:null,goal:10,progress:{},lives:3,device:deviceId()}; load(); renderCourse(); toast('Progress reset') }
+    }
   })
 
-  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape' && $('#modal').classList.contains('open')) endSkill(false); if(e.key==='Enter' && $('#modal').classList.contains('open')) $('#next').click() })
+  document.addEventListener('keydown', (e)=>{
+    if(e.key==='Escape' && modal.classList.contains('open')) endSkill(false);
+    if(e.key==='Enter' && modal.classList.contains('open') && !$('#checkBtn').classList.contains('hidden')) $('#checkBtn').click()
+  })
 
   function firstVoiceWarm(){ if('speechSynthesis' in window){ setTimeout(()=> window.speechSynthesis.getVoices(), 100) } }
 
