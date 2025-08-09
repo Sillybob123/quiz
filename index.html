@@ -1,467 +1,1169 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>L+Y — Learn Hebrew & Albanian</title>
-  <meta name="description" content="L+Y: a free Duolingo‑style, single‑file app to learn basic Hebrew and Albanian. 100‑day course plans, XP, streaks, TTS, and optional speech recognition. Works on GitHub Pages (no backend)." />
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    :root{--bg:#0a0f24;--panel:#11183a;--ink:#e9edff;--muted:#b6c0ff;--brand1:#70d6ff;--brand2:#a0e9ff;--accent:#8aff80;--warn:#ffd166;--bad:#ff7a7a}
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:radial-gradient(1200px 800px at 15% 0%,#16245a,#0a0f24);color:var(--ink);-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
-    a{color:inherit}
-    #app{max-width:1180px;margin:0 auto;padding:20px}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>L+Y - Master Languages</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    /* Topbar */
-    .topbar{display:flex;align-items:center;gap:16px;justify-content:space-between;padding:10px 14px;background:rgba(17,24,58,.7);border:1px solid rgba(255,255,255,.06);backdrop-filter:blur(8px);border-radius:16px;position:sticky;top:10px;z-index:20}
-    .brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.3px}
-    .logo{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;position:relative;box-shadow:0 10px 30px rgba(160,233,255,.35)}
-    .logo svg{width:100%;height:100%;display:block}
-    .title{line-height:1}
-    .title .kicker{font-size:12px;color:var(--muted)}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:8px 12px;border-radius:999px;background:#0e1533;border:1px solid rgba(255,255,255,.08);font-size:14px;cursor:pointer;transition: background .2s}
-    .pill:hover{background:#1c264f;}
-    .stat{display:inline-flex;align-items:center;gap:8px}
-    .stat .dot{width:10px;height:10px;border-radius:50%}
-    .dot.xp{background:var(--accent)}
-    .dot.streak{background:var(--warn)}
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
 
-    .content{display:grid;grid-template-columns:320px 1fr;gap:18px;margin-top:18px}
-    @media (max-width:920px){.content{grid-template-columns:1fr}}
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
 
-    /* Sidebar */
-    .sidebar{position:sticky;top:92px;align-self:start;display:flex;flex-direction:column;gap:14px}
-    .card{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:20px;padding:16px}
-    .card h3{margin:0 0 8px}
-    .select{display:grid;gap:10px}
-    .select button{display:flex;align-items:center;gap:12px;background:#0f1840;color:var(--ink);border:1px solid rgba(255,255,255,.08);padding:12px 14px;border-radius:14px;cursor:pointer;transition:.2s transform,.2s box-shadow}
-    .select button:hover{transform:translateY(-1px);box-shadow:0 10px 24px rgba(108,204,255,.15)}
-    .flag{font-size:20px}
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
 
-    /* Lessons map */
-    .panel{background:var(--panel);border:1px solid rgba(255,255,255,.06);border-radius:22px;padding:18px;min-height:480px;position:relative;overflow:hidden}
-    .lesson-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}
-    .skill{position:relative;background:#0e1633;border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:12px;display:flex;flex-direction:column;gap:8px;min-height:110px;transition:.15s transform}
-    .skill:hover{transform:translateY(-2px)}
-    .skill .badge{position:absolute;top:-10px;right:-10px;background:linear-gradient(135deg,var(--brand1),var(--brand2));color:#013;font-weight:800;padding:6px 10px;border-radius:999px;box-shadow:0 10px 20px rgba(108,204,255,.35)}
-    .skill h4{margin:0;font-size:15px}
-    .skill .meta{color:var(--muted);font-size:12px}
-    .skill button{margin-top:auto;background:linear-gradient(135deg,var(--brand1),#b7f3ff);color:#012;border:0;padding:8px 10px;border-radius:10px;cursor:pointer;font-weight:700}
+        .logo {
+            font-size: 4rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradient 3s ease infinite;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+            margin-bottom: 10px;
+        }
 
-    /* Exercise modal */
-    .modal{position:fixed;inset:0;display:none;place-items:center;background:rgba(3,7,18,.6);backdrop-filter:blur(8px);z-index:50}
-    .modal.open{display:grid}
-    .sheet{width:min(880px,96vw);background:linear-gradient(180deg,#111a3a,#0d1531);border:1px solid rgba(255,255,255,.08);border-radius:22px;padding:20px;box-shadow:0 30px 80px rgba(0,0,0,.45)}
-    .sheet header{display:flex;justify-content:space-between;align-items:center}
-    .sheet h3{margin:0}
-    .close{background:#0e1633;border:1px solid rgba(255,255,255,.1);color:var(--ink);border-radius:12px;padding:8px 10px;cursor:pointer}
-    .q{margin-top:14px;background:#0f1840;border:1px solid rgba(255,255,255,.08);border-radius:18px;padding:16px;font-size:1.1rem}
-    .answers{display:grid;gap:10px;margin-top:12px;grid-template-columns: 1fr 1fr;}
-    .answers button{background:#0f1840;border:1px solid rgba(255,255,255,.08);color:var(--ink);padding:14px;border-radius:14px;text-align:left;cursor:pointer;font-size: 1rem; transition: background .2s, transform .2s;}
-    .answers button:hover:not(:disabled) { background: #1c264f; transform: translateY(-1px); }
-    .answers button.correct{outline:2px solid var(--accent); background: rgba(138, 255, 128, 0.1);}
-    .answers button.incorrect{outline:2px solid var(--bad); background: rgba(255, 122, 122, 0.1);}
-    .answers button:disabled { cursor: not-allowed; opacity: 0.7; }
-    .answers input:disabled { cursor: not-allowed; background: #0b112a !important; }
-    .actions{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:16px}
-    .primary{background:linear-gradient(135deg,var(--accent),#b6ffb0);color:#061a06;border:0;padding:10px 16px;border-radius:12px;font-weight:800;cursor:pointer}
-    .primary:disabled { background: var(--muted); cursor: not-allowed; opacity: 0.5; }
-    .ghost{background:#0e1633;border:1px solid rgba(255,255,255,.1);color:var(--ink);border-radius:12px;padding:10px 14px;cursor:pointer}
-    #hintBtn { background: #2a325c; }
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-    /* Toast & confetti */
-    .toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:#0e1633;border:1px solid rgba(255,255,255,.1);padding:12px 18px;border-radius:12px;display:none;z-index:70;font-weight: 600;}
-    .toast.show{display:block;animation:pop .2s ease}
-    @keyframes pop{from{transform:translate(-50%,10px);opacity:0}to{transform:translate(-50%,0);opacity:1}}
-    .confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden}
-    .piece{position:absolute;width:8px;height:14px;opacity:0;animation:fall 1.2s ease-out forwards}
-    @keyframes fall{0%{transform:translateY(-20px) rotate(0deg);opacity:0}10%{opacity:1}100%{transform:translateY(110vh) rotate(540deg);opacity:0}}
+        .tagline {
+            font-size: 1.2rem;
+            color: white;
+            opacity: 0.9;
+        }
 
-    .small{font-size:12px;color:var(--muted)} .muted{color:var(--muted)} .row{display:flex;align-items:center;gap:10px} .space{flex:1} .hidden{display:none!important}
-    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
-  </style>
+        .stats-bar {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 15px 25px;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: transform 0.3s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .streak {
+            color: #ff6b6b;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+        }
+
+        .language-selection {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .language-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            min-width: 200px;
+        }
+
+        .language-card:hover, .language-card.active {
+            transform: translateY(-10px);
+            border: 2px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .language-flag {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .language-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 10px;
+        }
+
+        .lesson-grid {
+            display: none;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .lesson-grid.active {
+            display: grid;
+        }
+
+        .lesson-item {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid #4ecdc4;
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .lesson-item:hover {
+            transform: scale(1.1);
+        }
+
+        .lesson-item.completed {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            border-color: #44a08d;
+        }
+
+        .lesson-item.locked {
+            background: rgba(0, 0, 0, 0.3);
+            border-color: #666;
+            cursor: not-allowed;
+        }
+
+        .lesson-number {
+            font-weight: bold;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .lesson-interface {
+            display: none;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            margin-top: 30px;
+            color: #333;
+        }
+
+        .lesson-interface.active {
+            display: block;
+        }
+
+        .lesson-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lesson-title {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .progress-bar {
+            background: #e0e0e0;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, #4ecdc4, #44a08d);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .question-area {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .question-text {
+            font-size: 1.8rem;
+            margin-bottom: 30px;
+            color: #333;
+        }
+
+        .word-display {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin: 20px 0;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .translation {
+            font-size: 1.5rem;
+            color: #666;
+            margin: 20px 0;
+        }
+
+        .pronunciation {
+            font-size: 1.2rem;
+            color: #888;
+            font-style: italic;
+            margin: 10px 0;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 30px 0;
+        }
+
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .option:hover {
+            background: #e9ecef;
+            transform: translateY(-2px);
+        }
+
+        .option.correct {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+
+        .option.wrong {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+
+        .btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .speak-btn {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .feedback {
+            text-align: center;
+            margin: 20px 0;
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .feedback.correct {
+            color: #28a745;
+        }
+
+        .feedback.wrong {
+            color: #dc3545;
+        }
+
+        .completion-screen {
+            display: none;
+            text-align: center;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            margin-top: 30px;
+        }
+
+        .completion-screen.active {
+            display: block;
+        }
+
+        .celebration {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-30px); }
+            60% { transform: translateY(-15px); }
+        }
+
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 3rem;
+            }
+            
+            .stats-bar {
+                gap: 15px;
+            }
+            
+            .language-card {
+                min-width: 150px;
+                padding: 20px;
+            }
+            
+            .lesson-item {
+                width: 60px;
+                height: 60px;
+            }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .teaching-mode {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+
+        .review-mode {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+    </style>
 </head>
 <body>
-  <div id="app">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logo" aria-hidden="true" title="L+Y">
-          <svg viewBox="0 0 100 100" role="img" aria-label="L plus Y logo">
-            <defs>
-              <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stop-color="var(--brand1)"/>
-                <stop offset="100%" stop-color="var(--brand2)"/>
-              </linearGradient>
-              <linearGradient id="glass" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stop-color="#ffffff" stop-opacity=".7"/>
-                <stop offset="100%" stop-color="#ffffff" stop-opacity=".05"/>
-              </linearGradient>
-              <filter id="blur"><feGaussianBlur stdDeviation="1.2"/></filter>
-            </defs>
-            <rect x="8" y="8" width="84" height="84" rx="18" fill="url(#g1)"/>
-            <rect x="8" y="8" width="84" height="84" rx="18" fill="url(#glass)"/>
-            <g fill="#001529" font-family="Inter, system-ui" font-weight="800" font-size="42" text-anchor="middle">
-              <text x="38" y="60">L</text>
-              <text x="50" y="56" font-size="22">＋</text>
-              <text x="68" y="60">Y</text>
-            </g>
-            <circle cx="84" cy="20" r="6" fill="#fff" opacity=".7" filter="url(#blur)"/>
-          </svg>
+    <div class="container">
+        <div class="header">
+            <div class="logo">L+Y</div>
+            <div class="tagline">Master Hebrew & Albanian</div>
         </div>
-        <div class="title">
-          <div>L+Y</div>
-          <div class="kicker">Hebrew & Albanian • 100‑day plans</div>
+
+        <div class="stats-bar">
+            <div class="stat">
+                <div class="stat-value streak" id="streak">0</div>
+                <div>Day Streak</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="totalLessons">0</div>
+                <div>Lessons</div>
+            </div>
+            <div class="stat">
+                <div class="stat-value" id="currentLevel">1</div>
+                <div>Level</div>
+            </div>
         </div>
-      </div>
-      <div class="row">
-        <div class="pill stat" title="XP"><span class="dot xp"></span><span id="xp">0</span> XP</div>
-        <div class="pill stat" title="Daily Streak"><span class="dot streak"></span><span id="streak">0</span> 🔥</div>
-        <button class="pill" id="profileBtn" title="Profile & settings">⚙️ Settings</button>
-      </div>
+
+        <div class="main-content">
+            <div class="language-selection">
+                <div class="language-card" data-language="hebrew">
+                    <div class="language-flag">🇮🇱</div>
+                    <div class="language-name">Hebrew</div>
+                    <div>עברית</div>
+                </div>
+                <div class="language-card" data-language="albanian">
+                    <div class="language-flag">🇦🇱</div>
+                    <div class="language-name">Albanian</div>
+                    <div>Shqip</div>
+                </div>
+            </div>
+
+            <div class="lesson-grid" id="hebrewLessons"></div>
+            <div class="lesson-grid" id="albanianLessons"></div>
+
+            <div class="lesson-interface" id="lessonInterface">
+                <div class="lesson-header">
+                    <div class="lesson-title" id="lessonTitle">Lesson 1</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill"></div>
+                    </div>
+                </div>
+
+                <div class="question-area">
+                    <div class="question-text" id="questionText">Learn these words:</div>
+                    <div class="word-display" id="wordDisplay">שלום</div>
+                    <div class="pronunciation" id="pronunciation">[sha-LOHM]</div>
+                    <div class="translation" id="translation">Hello</div>
+                    
+                    <button class="btn speak-btn" id="speakBtn">🔊</button>
+                    
+                    <div class="options" id="options"></div>
+                    <div class="feedback" id="feedback"></div>
+                </div>
+
+                <div class="controls">
+                    <button class="btn btn-secondary" id="skipBtn">Skip</button>
+                    <button class="btn" id="continueBtn">Continue</button>
+                    <button class="btn" id="checkBtn" style="display:none;">Check</button>
+                </div>
+            </div>
+
+            <div class="completion-screen" id="completionScreen">
+                <div class="celebration bounce">🎉</div>
+                <h2>Lesson Complete!</h2>
+                <p>Great job! You've completed another lesson.</p>
+                <div class="controls">
+                    <button class="btn" id="nextLessonBtn">Next Lesson</button>
+                    <button class="btn btn-secondary" id="backToMapBtn">Back to Map</button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <div class="content">
-      <aside class="sidebar">
-        <div class="card">
-          <h3>Choose a course</h3>
-          <div class="select">
-            <button data-lang="he" aria-label="Hebrew course"><span class="flag">🇮🇱</span><div><div><strong>Hebrew</strong> <span class="small">(עברית)</span></div><div class="small">100 days • letters, phrases, travel</div></div><span class="space"></span><span class="small" id="progress-he">0%</span></button>
-            <button data-lang="sq" aria-label="Albanian course"><span class="flag">🇦🇱</span><div><div><strong>Albanian</strong> <span class="small">(Shqip)</span></div><div class="small">100 days • basics, numbers, phrases</div></div><span class="space"></span><span class="small" id="progress-sq">0%</span></button>
-          </div>
-        </div>
-        <div class="card">
-          <h3>Daily Goal</h3>
-          <div class="row">
-            <button class="pill" data-goal="10">🥉 10 XP</button>
-            <button class="pill" data-goal="30">🥈 30 XP</button>
-            <button class="pill" data-goal="50">🥇 50 XP</button>
-          </div>
-          <div class="small" id="goalText" style="margin-top:8px">Goal: 10 XP/day</div>
-        </div>
-        <div class="card">
-          <h3>Audio</h3>
-          <div class="row"><button class="pill" id="voiceTest">🔊 Test voice</button><button class="pill" id="micTest">🎤 Test mic</button></div>
-          <div class="small muted" id="audioStatus" style="margin-top:8px">Web Speech API for TTS/STT.</div>
-        </div>
-        <div class="card">
-          <h3>Profile & Backup</h3>
-          <div class="row"><button class="pill" id="exportBtn">⬇️ Export</button><button class="pill" id="importBtn">⬆️ Import</button><button class="pill" id="resetBtn">🗑️ Reset</button></div>
-          <div class="small" id="deviceInfo" style="margin-top:8px"></div>
-        </div>
-      </aside>
+    <script>
+        class LanguageLearningApp {
+            constructor() {
+                this.currentLanguage = null;
+                this.currentLesson = 0;
+                this.currentQuestion = 0;
+                this.isTeachingMode = true;
+                this.score = 0;
+                this.totalQuestions = 0;
+                this.progress = this.loadProgress();
+                
+                this.initializeLessons();
+                this.initializeEventListeners();
+                this.updateStats();
+                this.checkDailyStreak();
+            }
 
-      <main>
-        <div class="panel">
-          <h2 style="margin:0 0 8px">Course Map — <span id="courseTitle">Select a course</span></h2>
-          <div class="lesson-grid" id="grid" aria-live="polite"></div>
-        </div>
-        <div class="small muted" style="margin-top:8px">Progress, XP, and streak are saved in your browser. Export/Import to move between devices.</div>
-      </main>
-    </div>
-  </div>
+            initializeLessons() {
+                this.lessons = {
+                    hebrew: this.generateHebrewLessons(),
+                    albanian: this.generateAlbanianLessons()
+                };
+            }
 
-  <!-- Modal: Exercise Player -->
-  <div class="modal" id="modal" aria-hidden="true" role="dialog" aria-modal="true">
-    <div class="sheet" role="document">
-      <header>
-        <h3 id="exerciseTitle">Exercise</h3>
-        <div class="row"><div class="pill small" id="lives">❤️❤️❤️</div><button class="close" id="close">Esc</button></div>
-      </header>
-      <div class="q" id="question">Loading…</div>
-      <div class="answers" id="answers"></div>
-      <div class="actions">
-        <div class="row">
-          <button class="ghost" id="hintBtn">💡 Hint</button>
-          <button class="ghost" id="playAudio">🔊 Play</button>
-          <button class="ghost" id="speakBtn">🎤 Speak</button>
-        </div>
-        <button class="primary" id="checkBtn">Check</button>
-      </div>
-    </div>
-  </div>
+            // UPDATED: now creates 100 lessons with 5–6 words each (alternating 6,5)
+            generateHebrewLessons() {
+                const lessons = [];
+                const words = [
+                    // Basic greetings and common words (Lessons 1-20)
+                    {word: "שלום", pronunciation: "[sha-LOHM]", translation: "Hello/Peace"},
+                    {word: "בוקר טוב", pronunciation: "[BOH-ker tohv]", translation: "Good morning"},
+                    {word: "לילה טוב", pronunciation: "[LIE-lah tohv]", translation: "Good night"},
+                    {word: "תודה", pronunciation: "[toh-DAH]", translation: "Thank you"},
+                    {word: "בבקשה", pronunciation: "[beh-vah-ka-SHAH]", translation: "Please"},
+                    {word: "כן", pronunciation: "[ken]", translation: "Yes"},
+                    {word: "לא", pronunciation: "[loh]", translation: "No"},
+                    {word: "אני", pronunciation: "[ah-NEE]", translation: "I"},
+                    {word: "אתה", pronunciation: "[ah-TAH]", translation: "You (male)"},
+                    {word: "את", pronunciation: "[aht]", translation: "You (female)"},
+                    {word: "הוא", pronunciation: "[hoo]", translation: "He"},
+                    {word: "היא", pronunciation: "[hee]", translation: "She"},
+                    {word: "אנחנו", pronunciation: "[ah-NAHKH-noo]", translation: "We"},
+                    {word: "אתם", pronunciation: "[ah-TEM]", translation: "You (plural male)"},
+                    {word: "אתן", pronunciation: "[ah-TEN]", translation: "You (plural female)"},
+                    {word: "הם", pronunciation: "[hem]", translation: "They (male)"},
+                    {word: "הן", pronunciation: "[hen]", translation: "They (female)"},
+                    {word: "מה", pronunciation: "[mah]", translation: "What"},
+                    {word: "איפה", pronunciation: "[EH-foh]", translation: "Where"},
+                    {word: "מתי", pronunciation: "[mah-TIE]", translation: "When"},
+                    
+                    // Family and relationships (Lessons 21-35)
+                    {word: "משפחה", pronunciation: "[mish-pah-KHAH]", translation: "Family"},
+                    {word: "אבא", pronunciation: "[AH-bah]", translation: "Dad"},
+                    {word: "אמא", pronunciation: "[EE-mah]", translation: "Mom"},
+                    {word: "בן", pronunciation: "[ben]", translation: "Son"},
+                    {word: "בת", pronunciation: "[baht]", translation: "Daughter"},
+                    {word: "אח", pronunciation: "[ahkh]", translation: "Brother"},
+                    {word: "אחות", pronunciation: "[ah-KHOHT]", translation: "Sister"},
+                    {word: "סבא", pronunciation: "[SAH-bah]", translation: "Grandfather"},
+                    {word: "סבתא", pronunciation: "[sahv-TAH]", translation: "Grandmother"},
+                    {word: "חבר", pronunciation: "[khah-VER]", translation: "Friend (male)"},
+                    {word: "חברה", pronunciation: "[khah-veh-RAH]", translation: "Friend (female)"},
+                    {word: "בעל", pronunciation: "[BAH-ahl]", translation: "Husband"},
+                    {word: "אשה", pronunciation: "[ee-SHAH]", translation: "Wife"},
+                    {word: "ילד", pronunciation: "[YEH-led]", translation: "Child/Boy"},
+                    {word: "ילדה", pronunciation: "[yal-DAH]", translation: "Girl"},
+                    
+                    // Colors (Lessons 36-45)
+                    {word: "צבע", pronunciation: "[TSEH-vah]", translation: "Color"},
+                    {word: "אדום", pronunciation: "[ah-DOHM]", translation: "Red"},
+                    {word: "כחול", pronunciation: "[kah-KHOHL]", translation: "Blue"},
+                    {word: "ירוק", pronunciation: "[yah-ROHK]", translation: "Green"},
+                    {word: "צהוב", pronunciation: "[tsah-HOHV]", translation: "Yellow"},
+                    {word: "שחור", pronunciation: "[shah-KHOR]", translation: "Black"},
+                    {word: "לבן", pronunciation: "[lah-VAHN]", translation: "White"},
+                    {word: "סגול", pronunciation: "[sah-GOHL]", translation: "Purple"},
+                    {word: "כתום", pronunciation: "[kah-TOHM]", translation: "Orange"},
+                    {word: "ורוד", pronunciation: "[vah-ROHD]", translation: "Pink"},
+                    
+                    // Numbers (Lessons 46-60)
+                    {word: "מספר", pronunciation: "[mis-PAHR]", translation: "Number"},
+                    {word: "אחד", pronunciation: "[eh-KHAHD]", translation: "One"},
+                    {word: "שתיים", pronunciation: "[shtah-YEEM]", translation: "Two"},
+                    {word: "שלוש", pronunciation: "[shah-LOHSH]", translation: "Three"},
+                    {word: "ארבע", pronunciation: "[ahr-BAH]", translation: "Four"},
+                    {word: "חמש", pronunciation: "[khah-MESH]", translation: "Five"},
+                    {word: "שש", pronunciation: "[shesh]", translation: "Six"},
+                    {word: "שבע", pronunciation: "[SHEH-vah]", translation: "Seven"},
+                    {word: "שמונה", pronunciation: "[shmoh-NEH]", translation: "Eight"},
+                    {word: "תשע", pronunciation: "[TAY-shah]", translation: "Nine"},
+                    {word: "עשר", pronunciation: "[EH-ser]", translation: "Ten"},
+                    {word: "אחד עשר", pronunciation: "[ah-KHAHD ah-SAHR]", translation: "Eleven"},
+                    {word: "שתים עשרה", pronunciation: "[shtaym es-REH]", translation: "Twelve"},
+                    {word: "עשרים", pronunciation: "[es-REEM]", translation: "Twenty"},
+                    {word: "מאה", pronunciation: "[meh-AH]", translation: "Hundred"},
+                    
+                    // Food and drinks (Lessons 61-80)
+                    {word: "אוכל", pronunciation: "[OH-khel]", translation: "Food"},
+                    {word: "מים", pronunciation: "[MAH-yeem]", translation: "Water"},
+                    {word: "חלב", pronunciation: "[khah-LAHV]", translation: "Milk"},
+                    {word: "לחם", pronunciation: "[LEH-khem]", translation: "Bread"},
+                    {word: "בשר", pronunciation: "[bah-SAHR]", translation: "Meat"},
+                    {word: "דג", pronunciation: "[dahg]", translation: "Fish"},
+                    {word: "עוף", pronunciation: "[ohf]", translation: "Chicken"},
+                    {word: "ביצה", pronunciation: "[bay-TSAH]", translation: "Egg"},
+                    {word: "גבינה", pronunciation: "[gvee-NAH]", translation: "Cheese"},
+                    {word: "פירות", pronunciation: "[pey-ROHT]", translation: "Fruits"},
+                    {word: "תפוח", pronunciation: "[tah-POO-akh]", translation: "Apple"},
+                    {word: "בננה", pronunciation: "[bah-NAH-nah]", translation: "Banana"},
+                    {word: "תפוז", pronunciation: "[tah-POOZ]", translation: "Orange"},
+                    {word: "ירקות", pronunciation: "[yeh-rah-KOHT]", translation: "Vegetables"},
+                    {word: "עגבנייה", pronunciation: "[ahg-vah-nee-YAH]", translation: "Tomato"},
+                    {word: "מלפפון", pronunciation: "[mel-ah-feh-FOHN]", translation: "Cucumber"},
+                    {word: "בצל", pronunciation: "[bah-TSAHL]", translation: "Onion"},
+                    {word: "קפה", pronunciation: "[kah-FEH]", translation: "Coffee"},
+                    {word: "תה", pronunciation: "[teh]", translation: "Tea"},
+                    {word: "מיץ", pronunciation: "[meets]", translation: "Juice"},
+                    
+                    // Daily activities (Lessons 81-100)
+                    {word: "ללכת", pronunciation: "[lah-LEH-khet]", translation: "To go"},
+                    {word: "לבוא", pronunciation: "[lah-VOH]", translation: "To come"},
+                    {word: "לאכול", pronunciation: "[leh-eh-KHOHL]", translation: "To eat"},
+                    {word: "לשתות", pronunciation: "[lish-TOHT]", translation: "To drink"},
+                    {word: "לישון", pronunciation: "[lee-SHOHN]", translation: "To sleep"},
+                    {word: "לקום", pronunciation: "[lah-KOOM]", translation: "To get up"},
+                    {word: "לעבוד", pronunciation: "[lah-ah-VOHD]", translation: "To work"},
+                    {word: "ללמוד", pronunciation: "[lil-MOHD]", translation: "To learn"},
+                    {word: "לקרוא", pronunciation: "[lik-ROH]", translation: "To read"},
+                    {word: "לכתוב", pronunciation: "[likh-TOHV]", translation: "To write"},
+                    {word: "לדבר", pronunciation: "[leh-dah-BEHR]", translation: "To speak"},
+                    {word: "לשמוע", pronunciation: "[lish-MOH-ah]", translation: "To hear"},
+                    {word: "לראות", pronunciation: "[lir-OHT]", translation: "To see"},
+                    {word: "לרוץ", pronunciation: "[lah-ROOTS]", translation: "To run"},
+                    {word: "ללכת ברגל", pronunciation: "[lah-LEH-khet beh-REH-gel]", translation: "To walk"},
+                    {word: "לשחק", pronunciation: "[leh-sah-KHEK]", translation: "To play"},
+                    {word: "לשיר", pronunciation: "[lah-SHEER]", translation: "To sing"},
+                    {word: "לרקוד", pronunciation: "[lir-KOHD]", translation: "To dance"},
+                    {word: "לבשל", pronunciation: "[leh-vah-SHEHL]", translation: "To cook"},
+                    {word: "לנקות", pronunciation: "[leh-nah-KOHT]", translation: "To clean"}
+                ];
 
-  <div class="toast" id="toast" role="status" aria-live="polite"></div>
-  <div class="confetti" id="confetti" aria-hidden="true"></div>
+                const totalLessons = 100;
+                for (let i = 0; i < totalLessons; i++) {
+                    const chunkSize = i % 2 === 0 ? 6 : 5; // 6,5,6,5,...
+                    const start = (i * 5) % words.length; // deterministic rotation with slight overlap
+                    const wordsForLesson = [];
+                    for (let k = 0; k < chunkSize; k++) {
+                        wordsForLesson.push(words[(start + k) % words.length]);
+                    }
+                    lessons.push({
+                        id: i + 1,
+                        title: `Lesson ${i + 1}`,
+                        words: wordsForLesson
+                    });
+                }
 
-  <script>
-  /***********************************
-   * L+Y — core logic v3 (enhanced) *
-   ***********************************/
+                return lessons;
+            }
 
-  // ——— utilities
-  const $ = (sel, root=document) => root.querySelector(sel);
-  const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-  const clamp = (n,min,max)=> Math.max(min, Math.min(max, n));
+            // UPDATED: now creates 100 lessons with 5–6 words each (alternating 6,5)
+            generateAlbanianLessons() {
+                const lessons = [];
+                const words = [
+                    // Basic greetings (Lessons 1-20)
+                    {word: "Përshëndetje", pronunciation: "[per-shen-DET-ye]", translation: "Hello"},
+                    {word: "Mirëmëngjes", pronunciation: "[mee-ruh-MEN-gyes]", translation: "Good morning"},
+                    {word: "Mirëdita", pronunciation: "[mee-ruh-DEE-ta]", translation: "Good day"},
+                    {word: "Mirëmbrëma", pronunciation: "[mee-ruh-MBREM-a]", translation: "Good evening"},
+                    {word: "Natën e mirë", pronunciation: "[NA-ten e MEE-ruh]", translation: "Good night"},
+                    {word: "Faleminderit", pronunciation: "[fa-le-meen-DE-reet]", translation: "Thank you"},
+                    {word: "Ju lutem", pronunciation: "[yoo LOO-tem]", translation: "Please"},
+                    {word: "Po", pronunciation: "[po]", translation: "Yes"},
+                    {word: "Jo", pronunciation: "[yo]", translation: "No"},
+                    {word: "Unë", pronunciation: "[OO-nuh]", translation: "I"},
+                    {word: "Ti", pronunciation: "[tee]", translation: "You (singular)"},
+                    {word: "Ai", pronunciation: "[ah-EE]", translation: "He"},
+                    {word: "Ajo", pronunciation: "[ah-YO]", translation: "She"},
+                    {word: "Ne", pronunciation: "[neh]", translation: "We"},
+                    {word: "Ju", pronunciation: "[yoo]", translation: "You (plural)"},
+                    {word: "Ata", pronunciation: "[ah-TA]", translation: "They (male)"},
+                    {word: "Ato", pronunciation: "[ah-TO]", translation: "They (female)"},
+                    {word: "Çfarë", pronunciation: "[chfa-RUH]", translation: "What"},
+                    {word: "Ku", pronunciation: "[koo]", translation: "Where"},
+                    {word: "Kur", pronunciation: "[koor]", translation: "When"},
+                    
+                    // Family (Lessons 21-35)
+                    {word: "Familje", pronunciation: "[fa-MEEL-ye]", translation: "Family"},
+                    {word: "Baba", pronunciation: "[BA-ba]", translation: "Dad"},
+                    {word: "Mama", pronunciation: "[MA-ma]", translation: "Mom"},
+                    {word: "Bir", pronunciation: "[beer]", translation: "Son"},
+                    {word: "Vajzë", pronunciation: "[VAH-y-zuh]", translation: "Daughter"},
+                    {word: "Vëlla", pronunciation: "[VUH-la]", translation: "Brother"},
+                    {word: "Motër", pronunciation: "[MO-tur]", translation: "Sister"},
+                    {word: "Gjysh", pronunciation: "[gysh]", translation: "Grandfather"},
+                    {word: "Gjyshe", pronunciation: "[GYSH-e]", translation: "Grandmother"},
+                    {word: "Mik", pronunciation: "[meek]", translation: "Friend (male)"},
+                    {word: "Mike", pronunciation: "[MEE-ke]", translation: "Friend (female)"},
+                    {word: "Bashkëshort", pronunciation: "[bash-kuh-SHORT]", translation: "Husband"},
+                    {word: "Bashkëshorte", pronunciation: "[bash-kuh-SHOR-te]", translation: "Wife"},
+                    {word: "Fëmijë", pronunciation: "[fuh-MEE-yuh]", translation: "Child"},
+                    {word: "Djalë", pronunciation: "[DYA-luh]", translation: "Boy"},
+                    
+                    // Colors (Lessons 36-45)
+                    {word: "Ngjyrë", pronunciation: "[NGYEE-ruh]", translation: "Color"},
+                    {word: "Kuq", pronunciation: "[kook]", translation: "Red"},
+                    {word: "Blu", pronunciation: "[bloo]", translation: "Blue"},
+                    {word: "Gjelbër", pronunciation: "[gel-BUR]", translation: "Green"},
+                    {word: "Verdhë", pronunciation: "[VER-dhuh]", translation: "Yellow"},
+                    {word: "Zi", pronunciation: "[zee]", translation: "Black"},
+                    {word: "Bardhë", pronunciation: "[BAR-dhuh]", translation: "White"},
+                    {word: "Vjollcë", pronunciation: "[VYOL-tse]", translation: "Purple"},
+                    {word: "Portokalli", pronunciation: "[por-to-KA-lee]", translation: "Orange"},
+                    {word: "Rozë", pronunciation: "[RO-zuh]", translation: "Pink"},
+                    
+                    // Numbers (Lessons 46-60)
+                    {word: "Numër", pronunciation: "[NOO-mur]", translation: "Number"},
+                    {word: "Një", pronunciation: "[nyuh]", translation: "One"},
+                    {word: "Dy", pronunciation: "[dee]", translation: "Two"},
+                    {word: "Tre", pronunciation: "[treh]", translation: "Three"},
+                    {word: "Katër", pronunciation: "[KA-tur]", translation: "Four"},
+                    {word: "Pesë", pronunciation: "[PE-suh]", translation: "Five"},
+                    {word: "Gjashtë", pronunciation: "[GYASH-tuh]", translation: "Six"},
+                    {word: "Shtatë", pronunciation: "[SHTA-tuh]", translation: "Seven"},
+                    {word: "Tetë", pronunciation: "[TE-tuh]", translation: "Eight"},
+                    {word: "Nëntë", pronunciation: "[NUN-tuh]", translation: "Nine"},
+                    {word: "Dhjetë", pronunciation: "[DHYE-tuh]", translation: "Ten"},
+                    {word: "Njëmbëdhjetë", pronunciation: "[nyum-buh-DHYE-tuh]", translation: "Eleven"},
+                    {word: "Dymbëdhjetë", pronunciation: "[deem-buh-DHYE-tuh]", translation: "Twelve"},
+                    {word: "Njëzet", pronunciation: "[nyuh-ZET]", translation: "Twenty"},
+                    {word: "Njëqind", pronunciation: "[nyuh-KEEND]", translation: "Hundred"},
+                    
+                    // Food and drinks (Lessons 61-80)
+                    {word: "Ushqim", pronunciation: "[oosh-KEEM]", translation: "Food"},
+                    {word: "Ujë", pronunciation: "[OO-yuh]", translation: "Water"},
+                    {word: "Qumësht", pronunciation: "[koo-MUSHT]", translation: "Milk"},
+                    {word: "Bukë", pronunciation: "[BOO-kuh]", translation: "Bread"},
+                    {word: "Mish", pronunciation: "[meesh]", translation: "Meat"},
+                    {word: "Peshk", pronunciation: "[peshk]", translation: "Fish"},
+                    {word: "Pulë", pronunciation: "[POO-luh]", translation: "Chicken"},
+                    {word: "Vezë", pronunciation: "[VE-zuh]", translation: "Egg"},
+                    {word: "Djathë", pronunciation: "[DYA-thuh]", translation: "Cheese"},
+                    {word: "Fruta", pronunciation: "[FROO-ta]", translation: "Fruits"},
+                    {word: "Mollë", pronunciation: "[MO-luh]", translation: "Apple"},
+                    {word: "Banane", pronunciation: "[ba-NA-ne]", translation: "Banana"},
+                    {word: "Portokall", pronunciation: "[por-to-KAL]", translation: "Orange"},
+                    {word: "Perime", pronunciation: "[pe-REE-me]", translation: "Vegetables"},
+                    {word: "Domate", pronunciation: "[do-MA-te]", translation: "Tomato"},
+                    {word: "Kastravec", pronunciation: "[kas-tra-VETS]", translation: "Cucumber"},
+                    {word: "Qepë", pronunciation: "[KE-puh]", translation: "Onion"},
+                    {word: "Kafe", pronunciation: "[ka-FE]", translation: "Coffee"},
+                    {word: "Çaj", pronunciation: "[chai]", translation: "Tea"},
+                    {word: "Lëng", pronunciation: "[lung]", translation: "Juice"},
+                    
+                    // Daily activities (Lessons 81-100)
+                    {word: "Të shkosh", pronunciation: "[tuh SHKO-sh]", translation: "To go"},
+                    {word: "Të vish", pronunciation: "[tuh veesh]", translation: "To come"},
+                    {word: "Të hash", pronunciation: "[tuh hash]", translation: "To eat"},
+                    {word: "Të pish", pronunciation: "[tuh peesh]", translation: "To drink"},
+                    {word: "Të flesh", pronunciation: "[tuh flesh]", translation: "To sleep"},
+                    {word: "Të çohesh", pronunciation: "[tuh CHO-hesh]", translation: "To get up"},
+                    {word: "Të punosh", pronunciation: "[tuh poo-NOSH]", translation: "To work"},
+                    {word: "Të mësosh", pronunciation: "[tuh muh-SOSH]", translation: "To learn"},
+                    {word: "Të lexosh", pronunciation: "[tuh le-KOSH]", translation: "To read"},
+                    {word: "Të shkruash", pronunciation: "[tuh shkroo-ASH]", translation: "To write"},
+                    {word: "Të flasësh", pronunciation: "[tuh fla-SUSH]", translation: "To speak"},
+                    {word: "Të dëgjosh", pronunciation: "[tuh dug-YOSH]", translation: "To hear"},
+                    {word: "Të shikosh", pronunciation: "[tuh shee-KOSH]", translation: "To see"},
+                    {word: "Të vraposh", pronunciation: "[tuh vra-POSH]", translation: "To run"},
+                    {word: "Të ecësh", pronunciation: "[tuh e-TSUSH]", translation: "To walk"},
+                    {word: "Të luash", pronunciation: "[tuh LOO-ash]", translation: "To play"},
+                    {word: "Të këndosh", pronunciation: "[tuh kun-DOSH]", translation: "To sing"},
+                    {word: "Të vallëzosh", pronunciation: "[tuh va-luh-ZOSH]", translation: "To dance"},
+                    {word: "Të gatuash", pronunciation: "[tuh ga-too-ASH]", translation: "To cook"},
+                    {word: "Të pastrosh", pronunciation: "[tuh pas-TROSH]", translation: "To clean"}
+                ];
 
-  // Deterministic PRNG for reproducible daily sets
-  function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
-  function seededShuffle(arr, seed){const r=mulberry32(seed);const a=[...arr];for(let i=a.length-1;i>0;i--){const j=Math.floor(r()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+                const totalLessons = 100;
+                for (let i = 0; i < totalLessons; i++) {
+                    const chunkSize = i % 2 === 0 ? 6 : 5; // 6,5,6,5,...
+                    const start = (i * 5) % words.length;
+                    const wordsForLesson = [];
+                    for (let k = 0; k < chunkSize; k++) {
+                        wordsForLesson.push(words[(start + k) % words.length]);
+                    }
+                    lessons.push({
+                        id: i + 1,
+                        title: `Lesson ${i + 1}`,
+                        words: wordsForLesson
+                    });
+                }
 
-  // Normalize (serverless, no Unicode escape usage in source)
-  function stripDiacritics(s){
-    const map = {'ë':'e','Ë':'e','ç':'c','Ç':'c','á':'a','à':'a','ä':'a','é':'e','è':'e','ê':'e','í':'i','ì':'i','ï':'i','ó':'o','ò':'o','ö':'o','ú':'u','ù':'u','ü':'u'};
-    return s.replace(/[ëËçÇáàäéèêíìïóòöúùü]/g, ch => map[ch] || ch);
-  }
-  function norm(s){ return stripDiacritics((s||'').toString().trim().toLowerCase()).replace(/ +/g,' ') }
+                return lessons;
+            }
 
-  // Timezone‑aware date key (no server clock)
-  function tzLocalDateKey(){
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-    const now = new Date();
-    const fmt = new Intl.DateTimeFormat('en-CA',{timeZone:tz, year:'numeric', month:'2-digit', day:'2-digit'});
-    const parts = fmt.formatToParts(now);
-    const y = parts.find(p=>p.type==='year').value;
-    const m = parts.find(p=>p.type==='month').value;
-    const d = parts.find(p=>p.type==='day').value;
-    return `${y}-${m}-${d}`;
-  }
+            initializeEventListeners() {
+                // Language selection
+                document.querySelectorAll('.language-card').forEach(card => {
+                    card.addEventListener('click', () => {
+                        this.selectLanguage(card.dataset.language);
+                    });
+                });
 
-  // Lightweight device fingerprint (not IP — serverless)
-  function deviceId(){
-    const s = [navigator.userAgent, screen.width, screen.height, Intl.DateTimeFormat().resolvedOptions().timeZone].join('|');
-    let h=0;for(let i=0;i<s.length;i++){h=((h<<5)-h)+s.charCodeAt(i);h|=0}return 'LY-'+Math.abs(h).toString(36)
-  }
+                // Control buttons
+                document.getElementById('continueBtn').addEventListener('click', () => {
+                    this.nextQuestion();
+                });
 
-  // Confetti + toast
-  const toastEl = $('#toast');
-  function toast(msg){ toastEl.textContent = msg; toastEl.classList.add('show'); setTimeout(()=>toastEl.classList.remove('show'), 2200) }
-  const confettiEl = $('#confetti');
-  function confetti(){ for(let i=0;i<80;i++){ const p=document.createElement('div'); p.className='piece'; p.style.left=Math.random()*100+'vw'; p.style.top='-10px'; p.style.background=['#8aff80','#70d6ff','#ffd166','#ff7a7a'][i%4]; p.style.animationDelay=(Math.random()*0.6)+'s'; confettiEl.appendChild(p); setTimeout(()=>p.remove(),1500) } }
+                document.getElementById('checkBtn').addEventListener('click', () => {
+                    this.checkAnswer();
+                });
 
-  // Persistence
-  const store = {
-    get(){ return JSON.parse(localStorage.getItem('ly-data')||'{}') },
-    set(d){ localStorage.setItem('ly-data', JSON.stringify(d)) },
-    patch(p){ const d={...store.get(),...p}; store.set(d); return d }
-  }
+                document.getElementById('skipBtn').addEventListener('click', () => {
+                    this.skipQuestion();
+                });
 
-  let state = { lang:null, xp:0, streak:0, lastActiveKey:null, goal:10, progress:{}, lives:3, device:deviceId() };
-  function load(){ state = {...state, ...store.get()}; updateTopbar(); updateProgressPills(); $('#deviceInfo').textContent = `Device: ${state.device}` }
-  function save(){ store.set(state) }
+                document.getElementById('speakBtn').addEventListener('click', () => {
+                    this.speakWord();
+                });
 
-  // Vocabulary Pools
-  const HE_VOCAB = [
-    {t:'שלום', e:'hello'},{t:'תודה', e:'thank you'},{t:'בבקשה', e:'please'},{t:'סליחה', e:'sorry'},{t:'כן', e:'yes'},{t:'לא', e:'no'},{t:'בוקר טוב', e:'good morning'},{t:'לילה טוב', e:'good night'},{t:'מה נשמע?', e:'how are you?'},{t:'טוב', e:'good'},{t:'רע', e:'bad'},{t:'אוכל', e:'food'},{t:'מים', e:'water'},{t:'לחם', e:'bread'},{t:'קפה', e:'coffee'},{t:'תה', e:'tea'},{t:'חלב', e:'milk'},{t:'יין', e:'wine'},{t:'בירה', e:'beer'},{t:'תפוח', e:'apple'},{t:'בננה', e:'banana'},{t:'עוף', e:'chicken'},{t:'בקר', e:'beef'},{t:'דג', e:'fish'},{t:'ירקות', e:'vegetables'},{t:'פרי', e:'fruit'},{t:'בית', e:'home'},{t:'מלון', e:'hotel'},{t:'מסעדה', e:'restaurant'},{t:'תחנת רכבת', e:'train station'},{t:'תחנה', e:'station'},{t:'שדה תעופה', e:'airport'},{t:'אוטובוס', e:'bus'},{t:'מונית', e:'taxi'},{t:'כרטיס', e:'ticket'},{t:'שירותים', e:'bathroom'},{t:'ימין', e:'right'},{t:'שמאל', e:'left'},{t:'איפה', e:'where'},{t:'מתי', e:'when'},{t:'כמה', e:'how much'},{t:'מה', e:'what'},{t:'מי', e:'who'},{t:'אני', e:'I'},{t:'אתה', e:'you (m.)'},{t:'את', e:'you (f.)'},{t:'הוא', e:'he'},{t:'היא', e:'she'},{t:'אנחנו', e:'we'},{t:'הם', e:'they'},{t:'רוצה', e:'want'},{t:'צריך', e:'need'},{t:'יש לי', e:'I have'},{t:'אין לי', e:"I don't have"},{t:'אני מבין', e:'I understand (m.)'},{t:'אני לא מבין', e:"I don't understand (m.)"},{t:'עזרה', e:'help'},{t:'רופא', e:'doctor'},{t:'משטרה', e:'police'},{t:'חנות', e:'shop'},{t:'רחוב', e:'street'},{t:'עיר', e:'city'},{t:'כסף', e:'money'},{t:'זמן', e:'time'},{t:'יום', e:'day'},{t:'לילה', e:'night'},{t:'היום', e:'today'},{t:'מחר', e:'tomorrow'},{t:'אתמול', e:'yesterday'},{t:'פתוח', e:'open'},{t:'סגור', e:'closed'},{t:'חם', e:'hot'},{t:'קר', e:'cold'},{t:'יפה', e:'beautiful'},{t:'טעים', e:'tasty'},{t:'גדול', e:'big'},{t:'קטן', e:'small'},{t:'לאט', e:'slow'},{t:'מהר', e:'fast'},{t:'נסיעה', e:'trip'},{t:'כיוון', e:'direction'},{t:'כרטיס אשראי', e:'credit card'},{t:'חשבון', e:'bill'},{t:'ים', e:'sea'},{t:'חוף', e:'beach'}
-  ];
-  const SQ_VOCAB = [
-    {t:'përshëndetje', e:'hello'},{t:'faleminderit', e:'thank you'},{t:'ju lutem', e:'please'},{t:'më falni', e:'sorry'},{t:'po', e:'yes'},{t:'jo', e:'no'},{t:'mirëmëngjes', e:'good morning'},{t:'natë e mirë', e:'good night'},{t:'si je?', e:'how are you?'},{t:'mirë', e:'good'},{t:'keq', e:'bad'},{t:'ushqim', e:'food'},{t:'ujë', e:'water'},{t:'bukë', e:'bread'},{t:'kafe', e:'coffee'},{t:'çaj', e:'tea'},{t:'qumësht', e:'milk'},{t:'verë', e:'wine'},{t:'birrë', e:'beer'},{t:'mollë', e:'apple'},{t:'banane', e:'banana'},{t:'pulë', e:'chicken'},{t:'mish viçi', e:'beef'},{t:'peshk', e:'fish'},{t:'perime', e:'vegetables'},{t:'frut', e:'fruit'},{t:'shtëpi', e:'home'},{t:'hotel', e:'hotel'},{t:'restorant', e:'restaurant'},{t:'stacioni i trenit', e:'train station'},{t:'stacion', e:'station'},{t:'aeroport', e:'airport'},{t:'autobus', e:'bus'},{t:'taksi', e:'taxi'},{t:'biletë', e:'ticket'},{t:'banjë', e:'bathroom'},{t:'djathtas', e:'right'},{t:'majtas', e:'left'},{t:'ku', e:'where'},{t:'kur', e:'when'},{t:'sa', e:'how much'},{t:'çfarë', e:'what'},{t:'kush', e:'who'},{t:'unë', e:'I'},{t:'ti', e:'you'},{t:'ai', e:'he'},{t:'ajo', e:'she'},{t:'ne', e:'we'},{t:'ata', e:'they'},{t:'dua', e:'want'},{t:'duhet', e:'need'},{t:'kam', e:'I have'},{t:'nuk kam', e:"I don't have"},{t:'kuptoj', e:'I understand'},{t:'nuk kuptoj', e:"I don't understand"},{t:'ndihmë', e:'help'},{t:'mjek', e:'doctor'},{t:'policia', e:'police'},{t:'dyqan', e:'shop'},{t:'rrugë', e:'street'},{t:'qytet', e:'city'},{t:'para', e:'money'},{t:'kohë', e:'time'},{t:'ditë', e:'day'},{t:'natë', e:'night'},{t:'sot', e:'today'},{t:'nesër', e:'tomorrow'},{t:'dje', e:'yesterday'},{t:'hapur', e:'open'},{t:'mbyllur', e:'closed'},{t:'nxehtë', e:'hot'},{t:'ftohtë', e:'cold'},{t:'bukur', e:'beautiful'},{t:'i shijshëm', e:'tasty'},{t:'i madh', e:'big'},{t:'i vogël', e:'small'},{t:'ngadalë', e:'slow'},{t:'shpejt', e:'fast'},{t:'udhëtim', e:'trip'},{t:'drejtim', e:'direction'},{t:'kartë krediti', e:'credit card'},{t:'faturë', e:'bill'},{t:'det', e:'sea'},{t:'plazh', e:'beach'}
-  ];
+                document.getElementById('nextLessonBtn').addEventListener('click', () => {
+                    this.startNextLesson();
+                });
 
-  // Course generation
-  function buildCourse(lang){
-    const pool = lang==='he'? HE_VOCAB : SQ_VOCAB;
-    const label = lang==='he'? 'Hebrew (עברית)' : 'Albanian (Shqip)';
-    const code = lang==='he'? 'he-IL' : 'sq-AL';
-    const skills = [];
-    for(let day=1; day<=100; day++){
-      skills.push({ id:`${lang}-day-${day}`, name:`Day ${day}`, badge: day%10===0? '⭐':'📘', lessons: makeDayLessons(pool, lang, day) });
-    }
-    return { name:label, code, from:'English', skills };
-  }
+                document.getElementById('backToMapBtn').addEventListener('click', () => {
+                    this.backToLessonMap();
+                });
+            }
 
-  function pickN(pool, n, seed){ return seededShuffle(pool, seed).slice(0, n) }
-  function makeDistractors(pool, correct, n, seed){ return seededShuffle(pool.filter(x=>x!==correct), seed).slice(0, n).map(x=> x.e) }
+            selectLanguage(language) {
+                this.currentLanguage = language;
+                
+                // Update UI
+                document.querySelectorAll('.language-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                document.querySelector(`[data-language="${language}"]`).classList.add('active');
 
-  function makeDayLessons(pool, lang, day){
-    const seedBase = (lang==='he'? 101 : 202) + day*73;
-    const items = pickN(pool, 4, seedBase);
-    const L = [];
-    // 1) Multiple choice: target -> English
-    L.push({ type:'mc', prompt:`Choose the meaning of: <strong>${items[0].t}</strong>`, choices: seededShuffle([items[0].e, ...makeDistractors(pool, items[0], 3, seedBase+1)], seedBase+2), answer: items[0].e });
-    // 2) Type English -> target
-    L.push({ type:'type', prompt:`Type in ${lang==='he'?'Hebrew':'Albanian'}: <em>${items[1].e}</em>`, answer: items[1].t, dir: lang==='he'? 'rtl':'ltr' });
-    // 3) TTS: play target, user picks English
-    L.push({ type:'tts', prompt:'Listen & choose the meaning', tts: items[2].t, choices: seededShuffle([items[2].e, ...makeDistractors(pool, items[2], 3, seedBase+3)], seedBase+4), answer: items[2].e });
-    // 4) Type target -> English
-    L.push({ type:'type', prompt:`Translate to English: <strong>${items[3].t}</strong>`, answer: items[3].e });
-    // 5) Speak every 5th day (optional)
-    if(day % 5 === 0){ L.push({ type:'speak', prompt:`Say: ${items[0].t}`, answer: items[0].t }); }
-    return L;
-  }
+                document.querySelectorAll('.lesson-grid').forEach(grid => {
+                    grid.classList.remove('active');
+                });
+                document.getElementById(`${language}Lessons`).classList.add('active');
 
-  const COURSES = { he: buildCourse('he'), sq: buildCourse('sq') };
+                this.renderLessonMap(language);
+            }
 
-  // UI rendering
-  const grid = $('#grid'); const courseTitle = $('#courseTitle');
-  function renderCourse(){
-    grid.innerHTML='';
-    if(!state.lang){ courseTitle.textContent='Select a course'; return }
-    const course = COURSES[state.lang];
-    courseTitle.textContent = course.name;
-    course.skills.forEach((skill,i)=>{
-      const div = document.createElement('div');
-      div.className='skill';
-      const isCompleted = state.progress[skill.id]?.completed;
-      div.innerHTML = `<div class="badge">${skill.badge}</div><h4>${i+1}. ${skill.name}</h4><div class="meta">${skill.lessons.length} exercises</div><button data-skill="${skill.id}">${isCompleted? 'Review' : 'Start ➜'}</button>`;
-      if(isCompleted){ const done=document.createElement('div'); done.className='small'; done.style.cssText='position:absolute;bottom:10px;right:12px;color:var(--accent);font-weight:800'; done.textContent='✓ Complete'; div.appendChild(done) }
-      grid.appendChild(div);
-    })
-  }
+            renderLessonMap(language) {
+                const grid = document.getElementById(`${language}Lessons`);
+                grid.innerHTML = '';
 
-  function updateTopbar(){ $('#xp').textContent = state.xp|0; $('#streak').textContent = state.streak|0 }
-  function updateProgressPills(){
-    const pct = (lang)=>{ const c=COURSES[lang]; const total=c.skills.length; const done=c.skills.filter(s=>state.progress[s.id]?.completed).length; return Math.round((done/total)*100) };
-    $('#progress-he').textContent = pct('he')+'%'; $('#progress-sq').textContent = pct('sq')+'%'
-  }
+                this.lessons[language].forEach((lesson, index) => {
+                    const lessonItem = document.createElement('div');
+                    lessonItem.className = 'lesson-item';
+                    
+                    const completed = this.progress[language] && this.progress[language].completedLessons.includes(index + 1);
+                    const locked = index > 0 && (!this.progress[language] || !this.progress[language].completedLessons.includes(index));
+                    
+                    if (completed) {
+                        lessonItem.classList.add('completed');
+                    } else if (locked) {
+                        lessonItem.classList.add('locked');
+                    }
 
-  // Streak logic
-  function touchStreak(){
-    const key = tzLocalDateKey();
-    if(state.lastActiveKey===key){ /* same day */ }
-    else if(!state.lastActiveKey){ state.streak=1 }
-    else{
-      const last = new Date(state.lastActiveKey+'T00:00:00');
-      const curr = new Date(key+'T00:00:00');
-      const diff = Math.round((curr-last)/86400000);
-      if(diff===1) state.streak += 1; else if(diff>1) state.streak = 1;
-    }
-    state.lastActiveKey = key;
-  }
+                    lessonItem.innerHTML = `<div class="lesson-number">${index + 1}</div>`;
+                    
+                    if (!locked) {
+                        lessonItem.addEventListener('click', () => {
+                            this.startLesson(index);
+                        });
+                    }
 
-  // --- Exercise engine ---
-  let queue=[]; let skillId=null; let index=0; let currentLangCode='en-US';
-  let isAnswered = false; // NEW: track if current question is graded
-  const modal = $('#modal'); const qEl = $('#question'); const aEl = $('#answers'); const titleEl = $('#exerciseTitle'); const livesEl = $('#lives');
+                    grid.appendChild(lessonItem);
+                });
+            }
 
-  const tts = {
-    speak(text, lang){ if(!('speechSynthesis' in window)){ toast('🔇 TTS not supported'); return } const u=new SpeechSynthesisUtterance(text); u.lang=lang||'en-US'; const voices=speechSynthesis.getVoices(); const v=voices.find(v=>v.lang.toLowerCase().startsWith((lang||'en-US').toLowerCase())); if(v) u.voice=v; speechSynthesis.cancel(); speechSynthesis.speak(u) }
-  }
-  function canSTT(){ return ('webkitSpeechRecognition' in window) || ('SpeechRecognition' in window) }
-  function initSTT(){ const Cls=window.SpeechRecognition||window.webkitSpeechRecognition; if(!Cls) return null; const r=new Cls(); r.continuous=false; r.interimResults=false; r.lang=currentLangCode; return r }
-  let recognizer=null;
+            startLesson(lessonIndex) {
+                this.currentLesson = lessonIndex;
+                this.currentQuestion = 0;
+                this.isTeachingMode = true;
+                this.score = 0;
+                this.totalQuestions = 0;
 
-  function startSkill(id){
-    const course = COURSES[state.lang]; const skill = course.skills.find(s=>s.id===id); if(!skill) return;
-    skillId=id; queue=[...skill.lessons]; index=0; state.lives=3; isAnswered=false; updateLives(); currentLangCode=course.code; titleEl.textContent = `${skill.name} (${course.name})`; modal.classList.add('open'); modal.setAttribute('aria-hidden','false'); document.body.style.overflow='hidden'; recognizer=initSTT(); nextExercise();
-  }
-  function updateLives(){ livesEl.textContent = '❤️'.repeat(state.lives)+' '+ '♡'.repeat(clamp(3-state.lives, 0, 3)) }
-  function endSkill(win){ modal.classList.remove('open'); modal.setAttribute('aria-hidden','true'); document.body.style.overflow='auto'; if(win){ state.xp += 10; touchStreak(); state.progress[skillId]={completed:true,crowns:1}; confetti(); toast('⭐ Skill complete! +10 XP'); updateTopbar(); updateProgressPills(); renderCourse(); save() } else { toast('💔 Out of lives. Review and try again!') } }
+                const lesson = this.lessons[this.currentLanguage][lessonIndex];
+                document.getElementById('lessonTitle').textContent = lesson.title;
 
-  function nextExercise(){
-    if(index >= queue.length) return endSkill(true);
-    if(state.lives <= 0) return endSkill(false);
-    isAnswered = false;
-    const ex = queue[index];
-    aEl.innerHTML = '';
-    qEl.innerHTML = ex.prompt;
-    $('#playAudio').classList.toggle('hidden', !ex.tts);
-    $('#speakBtn').classList.toggle('hidden', ex.type !== 'speak');
-    $('#hintBtn').classList.remove('hidden');
-    const checkBtn = $('#checkBtn');
-    checkBtn.disabled = false;
+                // Hide lesson map, show lesson interface
+                document.querySelectorAll('.lesson-grid').forEach(grid => {
+                    grid.classList.remove('active');
+                });
+                document.getElementById('lessonInterface').classList.add('active');
+                document.getElementById('completionScreen').classList.remove('active');
 
-    if(ex.dir){ qEl.setAttribute('dir', ex.dir) } else { qEl.removeAttribute('dir') }
+                this.showQuestion();
+            }
 
-    if(ex.type==='mc' || (ex.type==='tts' && ex.choices)){
-      checkBtn.classList.add('hidden');
-      const choices=[...(ex.choices||[])];
-      choices.forEach(c=>{ const b=document.createElement('button'); b.textContent=c; b.onclick=()=>grade(norm(c)===norm(ex.answer), b); aEl.appendChild(b) })
-    } else if(ex.type==='type' || (ex.type==='tts' && !ex.choices)){
-      checkBtn.classList.remove('hidden');
-      checkBtn.textContent = 'Check';
-      const input=document.createElement('input'); input.placeholder='Type your answer…'; input.autocomplete="off"; input.spellcheck=false;
-      input.style.cssText='padding:14px;width:100%;border-radius:12px;background:#0f1840;border:1px solid rgba(255,255,255,.12);color:var(--ink);font-size:1rem;grid-column: 1 / -1;';
-      if(ex.dir) input.setAttribute('dir',ex.dir);
-      aEl.appendChild(input);
-      input.focus();
-    } else if(ex.type==='speak'){
-      checkBtn.classList.add('hidden');
-      const hint=document.createElement('div'); hint.className='small muted'; hint.style.gridColumn = '1 / -1'; hint.textContent = "Click 🎤 Speak, say the phrase, we'll auto‑check."; aEl.appendChild(hint)
-    }
-    if(ex.tts){ tts.speak(ex.tts, currentLangCode) }
-  }
+            showQuestion() {
+                const lesson = this.lessons[this.currentLanguage][this.currentLesson];
+                const word = lesson.words[this.currentQuestion % lesson.words.length];
 
-  function grade(correct, btn) {
-    if (isAnswered) return;
-    isAnswered = true;
+                // Update progress bar
+                const totalSteps = lesson.words.length * 2; // Teaching + Review for each word
+                const currentStep = this.currentQuestion + (this.isTeachingMode ? 0 : lesson.words.length);
+                const progress = (currentStep / totalSteps) * 100;
+                document.getElementById('progressFill').style.width = `${progress}%`;
 
-    $$('#answers button, #answers input').forEach(el => el.disabled = true);
-    const checkBtn = $('#checkBtn');
-    checkBtn.textContent = 'Continue ➜';
-    checkBtn.classList.remove('hidden');
+                if (this.isTeachingMode) {
+                    this.showTeachingMode(word);
+                } else {
+                    this.showReviewMode(word);
+                }
+            }
 
-    if (btn) { btn.classList.add(correct ? 'correct' : 'incorrect') }
-    const input = aEl.querySelector('input');
-    if (input) { input.style.outline = `2px solid var(--${correct ? 'accent' : 'bad'})` }
+            showTeachingMode(word) {
+                document.getElementById('questionText').innerHTML = `
+                    <div class="teaching-mode">
+                        📚 Learn this word:
+                    </div>
+                `;
+                
+                document.getElementById('wordDisplay').textContent = word.word;
+                document.getElementById('pronunciation').textContent = word.pronunciation;
+                document.getElementById('translation').textContent = word.translation;
+                
+                document.getElementById('options').innerHTML = '';
+                document.getElementById('feedback').innerHTML = '';
+                
+                document.getElementById('continueBtn').style.display = 'inline-block';
+                document.getElementById('checkBtn').style.display = 'none';
+                document.getElementById('continueBtn').disabled = false;
+            }
 
-    if (correct) {
-      toast('✅ Correct!');
-    } else {
-      toast(`❌ Correct answer: ${queue[index].answer}`);
-      state.lives--;
-      updateLives();
-      if (state.lives <= 0) {
-        setTimeout(() => endSkill(false), 2000);
-      }
-    }
-  }
+            showReviewMode(word) {
+                document.getElementById('questionText').innerHTML = `
+                    <div class="review-mode">
+                        🧠 What does this mean?
+                    </div>
+                `;
+                
+                document.getElementById('wordDisplay').textContent = word.word;
+                document.getElementById('pronunciation').textContent = word.pronunciation;
+                document.getElementById('translation').textContent = '';
+                
+                this.generateOptions(word);
+                document.getElementById('feedback').innerHTML = '';
+                
+                document.getElementById('continueBtn').style.display = 'none';
+                document.getElementById('checkBtn').style.display = 'inline-block';
+                document.getElementById('checkBtn').disabled = false;
+            }
 
-  // --- Event Listeners ---
-  document.addEventListener('click', (e)=>{
-    const t=e.target.closest('button'); // Use closest to handle clicks on icons inside buttons
-    if(!t) return;
+            generateOptions(correctWord) {
+                const allWords = this.lessons[this.currentLanguage].map(l => l.words).flat();
+                
+                // Get wrong options from other words
+                const wrongOptions = allWords
+                    .filter(w => w.translation !== correctWord.translation)
+                    .sort(() => Math.random() - 0.5)
+                    .slice(0, 3)
+                    .map(w => w.translation);
 
-    if(t.matches('.select button[data-lang]')){ state.lang=t.getAttribute('data-lang'); save(); renderCourse() }
-    if(t.matches('.skill button[data-skill]')) startSkill(t.getAttribute('data-skill'));
-    if(t.matches('#close')) endSkill(false);
+                const options = [...wrongOptions, correctWord.translation]
+                    .sort(() => Math.random() - 0.5);
 
-    if(t.matches('#checkBtn')){
-      if(isAnswered) {
-        index++;
-        nextExercise();
-      } else {
-        const ex=queue[index];
-        const input=aEl.querySelector('input');
-        if(input){ const val=input.value||''; const ans=ex.answer||''; grade(norm(val)===norm(ans)) }
-      }
-    }
+                const optionsContainer = document.getElementById('options');
+                optionsContainer.innerHTML = '';
 
-    if(t.matches('#hintBtn')){
-      if (isAnswered) return;
-      const ex = queue[index];
-      toast(`💡 Hint: ${ex.answer}`);
-      const input = aEl.querySelector('input');
-      if (input) { input.value = ex.answer; input.focus(); }
-    }
+                options.forEach(option => {
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.textContent = option;
+                    optionElement.addEventListener('click', () => {
+                        document.querySelectorAll('.option').forEach(opt => {
+                            opt.style.pointerEvents = 'none';
+                        });
+                        this.selectOption(optionElement, option === correctWord.translation);
+                    });
+                    optionsContainer.appendChild(optionElement);
+                });
+            }
 
-    if(t.matches('#playAudio')){ const ex=queue[index]; if(ex?.tts) tts.speak(ex.tts, currentLangCode) }
-    if(t.matches('#speakBtn')){
-      if(!canSTT()) return toast('🎤 Speech recognition not supported');
-      const ex=queue[index]; if(ex.type!=='speak') return;
-      try{
-        recognizer=initSTT();
-        recognizer.onresult=(ev)=>{ const said=ev.results[0][0].transcript; grade(norm(said)===norm(ex.answer)) };
-        recognizer.onerror=()=> toast('Mic error. Try again.');
-        recognizer.start();
-        toast('Listening…')
-      }catch(err){ toast('Mic blocked. Allow microphone and retry.') }
-    }
+            selectOption(element, isCorrect) {
+                this.totalQuestions++;
+                
+                if (isCorrect) {
+                    element.classList.add('correct');
+                    this.score++;
+                    document.getElementById('feedback').innerHTML = '<div class="feedback correct">✅ Correct! Great job!</div>';
+                } else {
+                    element.classList.add('wrong');
+                    document.getElementById('feedback').innerHTML = '<div class="feedback wrong">❌ Incorrect. Try again next time!</div>';
+                    
+                    // Highlight correct answer
+                    const lesson = this.lessons[this.currentLanguage][this.currentLesson];
+                    const word = lesson.words[this.currentQuestion % lesson.words.length];
+                    document.querySelectorAll('.option').forEach(opt => {
+                        if (opt.textContent === word.translation) {
+                            opt.classList.add('correct');
+                        }
+                    });
+                }
 
-    if(t.matches('[data-goal]')){ state.goal=Number(t.getAttribute('data-goal')); save(); $('#goalText').textContent=`Goal: ${state.goal} XP/day`; toast('Goal updated') }
-    if(t.matches('#voiceTest')){ tts.speak('Welcome to L plus Y!', 'en-US') }
-    if(t.matches('#micTest')){ toast(canSTT()? '🎤 Mic available' : '🎤 Not supported in this browser') }
+                document.getElementById('continueBtn').style.display = 'inline-block';
+                document.getElementById('checkBtn').style.display = 'none';
+            }
 
-    if(t.matches('#exportBtn')){ const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='ly-save.json'; a.click(); URL.revokeObjectURL(url); toast('Save exported') }
-    if(t.matches('#importBtn')){ const inp=document.createElement('input'); inp.type='file'; inp.accept='application/json'; inp.onchange=(ev)=>{ const f=ev.target.files[0]; if(!f) return; const reader=new FileReader(); reader.onload=()=>{ try{ const data=JSON.parse(reader.result); state={...state,...data}; save(); load(); renderCourse(); toast('Save imported') }catch{ toast('Invalid file') } }; reader.readAsText(f) }; inp.click() }
-    if(t.matches('#resetBtn')){
-      // NOTE: confirm() can be blocked in sandboxed environments like CodePen or some iframes.
-      if(confirm('Reset all progress? This cannot be undone.')){ localStorage.removeItem('ly-data'); state={lang:null,xp:0,streak:0,lastActiveKey:null,goal:10,progress:{},lives:3,device:deviceId()}; load(); renderCourse(); toast('Progress reset') }
-    }
-  })
+            checkAnswer() {
+                // Using option click; nothing needed here.
+            }
 
-  document.addEventListener('keydown', (e)=>{
-    if(e.key==='Escape' && modal.classList.contains('open')) endSkill(false);
-    if(e.key==='Enter' && modal.classList.contains('open') && !$('#checkBtn').classList.contains('hidden')) $('#checkBtn').click()
-  })
+            nextQuestion() {
+                const lesson = this.lessons[this.currentLanguage][this.currentLesson];
+                
+                if (this.isTeachingMode) {
+                    // Move to next word in teaching mode
+                    this.currentQuestion++;
+                    if (this.currentQuestion >= lesson.words.length) {
+                        // Switch to review mode
+                        this.isTeachingMode = false;
+                        this.currentQuestion = 0;
+                    }
+                    this.showQuestion();
+                } else {
+                    // Move to next word in review mode
+                    this.currentQuestion++;
+                    if (this.currentQuestion >= lesson.words.length) {
+                        // Lesson complete
+                        this.completeLesson();
+                    } else {
+                        this.showQuestion();
+                    }
+                }
+            }
 
-  function firstVoiceWarm(){ if('speechSynthesis' in window){ setTimeout(()=> window.speechSynthesis.getVoices(), 100) } }
+            skipQuestion() {
+                this.nextQuestion();
+            }
 
-  function init(){ load(); renderCourse(); firstVoiceWarm() }
-  init();
-  </script>
+            speakWord() {
+                const lesson = this.lessons[this.currentLanguage][this.currentLesson];
+                const word = lesson.words[this.currentQuestion % lesson.words.length];
+                
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(word.word);
+                    
+                    // Set language for pronunciation
+                    if (this.currentLanguage === 'hebrew') {
+                        utterance.lang = 'he-IL';
+                    } else if (this.currentLanguage === 'albanian') {
+                        utterance.lang = 'sq-AL';
+                    }
+                    
+                    utterance.rate = 0.8;
+                    speechSynthesis.speak(utterance);
+                }
+            }
+
+            completeLesson() {
+                // Update progress
+                if (!this.progress[this.currentLanguage]) {
+                    this.progress[this.currentLanguage] = {
+                        completedLessons: [],
+                        currentStreak: 0,
+                        totalLessons: 0
+                    };
+                }
+
+                const lessonNumber = this.currentLesson + 1;
+                if (!this.progress[this.currentLanguage].completedLessons.includes(lessonNumber)) {
+                    this.progress[this.currentLanguage].completedLessons.push(lessonNumber);
+                    this.progress[this.currentLanguage].totalLessons++;
+                }
+
+                this.updateDailyStreak();
+                this.saveProgress();
+                this.updateStats();
+
+                // Show completion screen
+                document.getElementById('lessonInterface').classList.remove('active');
+                document.getElementById('completionScreen').classList.add('active');
+            }
+
+            startNextLesson() {
+                const nextLessonIndex = this.currentLesson + 1;
+                if (nextLessonIndex < this.lessons[this.currentLanguage].length) {
+                    this.startLesson(nextLessonIndex);
+                } else {
+                    this.backToLessonMap();
+                }
+            }
+
+            backToLessonMap() {
+                document.getElementById('lessonInterface').classList.remove('active');
+                document.getElementById('completionScreen').classList.remove('active');
+                this.renderLessonMap(this.currentLanguage);
+                document.getElementById(`${this.currentLanguage}Lessons`).classList.add('active');
+            }
+
+            loadProgress() {
+                // Use IP-based storage simulation
+                const ipKey = this.getIPKey();
+                const saved = localStorage.getItem(`ly_progress_${ipKey}`);
+                return saved ? JSON.parse(saved) : {
+                    hebrew: { completedLessons: [], currentStreak: 0, totalLessons: 0, lastActivity: null },
+                    albanian: { completedLessons: [], currentStreak: 0, totalLessons: 0, lastActivity: null },
+                    globalStreak: 0,
+                    lastActiveDate: null
+                };
+            }
+
+            saveProgress() {
+                const ipKey = this.getIPKey();
+                localStorage.setItem(`ly_progress_${ipKey}`, JSON.stringify(this.progress));
+            }
+
+            getIPKey() {
+                // Simulate IP-based key (in real app, would use actual IP)
+                let ipKey = localStorage.getItem('ly_ip_simulation');
+                if (!ipKey) {
+                    ipKey = 'ip_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('ly_ip_simulation', ipKey);
+                }
+                return ipKey;
+            }
+
+            updateStats() {
+                const totalLessons = (this.progress.hebrew?.totalLessons || 0) + 
+                                   (this.progress.albanian?.totalLessons || 0);
+                const currentLevel = Math.floor(totalLessons / 10) + 1;
+                
+                document.getElementById('streak').textContent = this.progress.globalStreak || 0;
+                document.getElementById('totalLessons').textContent = totalLessons;
+                document.getElementById('currentLevel').textContent = currentLevel;
+            }
+
+            checkDailyStreak() {
+                const today = new Date().toDateString();
+                const lastActive = this.progress.lastActiveDate;
+                
+                if (lastActive === today) {
+                    return;
+                }
+                
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                
+                if (lastActive === yesterday.toDateString()) {
+                    this.progress.globalStreak = (this.progress.globalStreak || 0) + 1;
+                } else if (lastActive && lastActive !== today) {
+                    this.progress.globalStreak = 1;
+                } else {
+                    this.progress.globalStreak = 1;
+                }
+                
+                this.progress.lastActiveDate = today;
+                this.saveProgress();
+                this.updateStats();
+            }
+
+            updateDailyStreak() {
+                this.checkDailyStreak();
+            }
+        }
+
+        // Initialize the app when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new LanguageLearningApp();
+        });
+    </script>
 </body>
 </html>
